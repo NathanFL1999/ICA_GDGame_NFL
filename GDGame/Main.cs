@@ -27,9 +27,6 @@ namespace GDGame
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        //effects used by primitive objects (wireframe, lit, unlit) and model objects
-        private BasicEffect unlitTexturedEffect, unlitWireframeEffect, modelEffect;
-
         //managers in the game
         private CameraManager<Camera3D> cameraManager;
 
@@ -66,6 +63,7 @@ namespace GDGame
         private UIManager uiManager;
         private MyMenuManager menuManager;
         private SoundManager soundManager;
+
 #endif
         #endregion Temp Vars Used For Demos
 
@@ -137,21 +135,17 @@ namespace GDGame
         private void LoadEffects()
         {
             //to do...
-            unlitTexturedEffect = new BasicEffect(_graphics.GraphicsDevice);
-            unlitTexturedEffect.VertexColorEnabled = true; //otherwise we wont see RGB
-            unlitTexturedEffect.TextureEnabled = true;
+            BasicEffect effect = null;
+
+            effect = new BasicEffect(_graphics.GraphicsDevice);
+            effect.VertexColorEnabled = true; //otherwise we wont see RGB
+            effect.TextureEnabled = true;
+            effectDictionary.Add("unlitTexturedEffect", effect);
 
             //wireframe primitives with no lighting and no texture
-            unlitWireframeEffect = new BasicEffect(_graphics.GraphicsDevice);
-            unlitWireframeEffect.VertexColorEnabled = true;
-
-            //model effect
-            //add a ModelObject
-            modelEffect = new BasicEffect(_graphics.GraphicsDevice);
-            modelEffect.TextureEnabled = true;
-            modelEffect.LightingEnabled = true;
-            modelEffect.PreferPerPixelLighting = true;
-            modelEffect.EnableDefaultLighting();
+            effect = new BasicEffect(_graphics.GraphicsDevice);
+            effect.VertexColorEnabled = true;
+            effectDictionary.Add("unlitWireframeEffect", effect);
         }
 
         private void LoadTextures()
@@ -185,16 +179,6 @@ namespace GDGame
             textureDictionary.Load("Assets/Textures/UI/Controls/reticuleDefault");
 
             //add more...
-        }
-
-        private void LoadModels()
-        {
-            //to do...
-            modelDictionary.Load("Assets/Models/sphere");
-            modelDictionary.Load("Assets/Models/box2");
-
-            modelDictionary.Load("Assets/Models/teapot");
-            modelDictionary.Load("Assets/Models/teapot_mediumpoly");
         }
 
         private void LoadFonts()
@@ -263,13 +247,15 @@ namespace GDGame
             LoadEffects();
             LoadTextures();
             LoadVertices();
-            LoadModels();
             LoadFonts();
             LoadSounds();
 
             //ui
             InitUI();
             InitMenu();
+
+            //add archetypes that can be cloned
+            InitPrimitiveArchetypes();
 
             //drawn non-collidable content
             InitNonCollidableDrawnContent(worldScale);
@@ -667,24 +653,46 @@ namespace GDGame
 
         private void InitCollidableDrawnContent(float worldScale)
         {
+            //add grass plane
+            InitGround(worldScale);
         }
 
         private void InitNonCollidableDrawnContent(float worldScale) //formerly InitPrimitives
         {
-            //add archetypes that can be cloned
-            InitPrimitiveArchetypes();
-
             //adds origin helper etc
             InitHelpers();
 
             //add skybox
             InitSkybox(worldScale);
-
-            InitModels();
         }
 
-        private void InitModels()
+        private void InitGround(float worldScale)
         {
+            Texture2D texture = null;
+            Transform3D transform = null;
+            PrimitiveObject primitiveObject = null;
+            EffectParameters effectParameters = null;
+            IVertexData vertexData = null;
+
+            texture = textureDictionary["grass1"];
+
+            transform = new Transform3D(Vector3.Zero, new Vector3(-90, 0, 0), worldScale * Vector3.One,
+                Vector3.UnitY, -Vector3.UnitZ);
+
+            effectParameters = new EffectParameters(effectDictionary["unlitTexturedEffect"],
+                texture, Color.White, 1);
+
+            PrimitiveType primitiveType;
+            int primitiveCount;
+            VertexPositionColorTexture[] vertices = VertexFactory.GetTextureQuadVertices(out primitiveType, out primitiveCount);
+
+            vertexData = new VertexData<VertexPositionColorTexture>(vertices,
+                primitiveType, primitiveCount);
+
+            primitiveObject = new PrimitiveObject("ground", ActorType.CollidableGround,
+                StatusType.Drawn, transform, effectParameters, vertexData);
+
+            objectManager.Add(primitiveObject);
         }
 
         private void InitPrimitiveArchetypes() //formerly InitTexturedQuad
@@ -692,7 +700,7 @@ namespace GDGame
             Transform3D transform3D = new Transform3D(Vector3.Zero, Vector3.Zero,
                Vector3.One, Vector3.UnitZ, Vector3.UnitY);
 
-            EffectParameters effectParameters = new EffectParameters(unlitTexturedEffect,
+            EffectParameters effectParameters = new EffectParameters(effectDictionary["unlitTexturedEffect"],
                 textureDictionary["grass1"], Color.White, 1);
 
             IVertexData vertexData = new VertexData<VertexPositionColorTexture>(
@@ -725,7 +733,7 @@ namespace GDGame
                 Vector3.Zero, new Vector3(10, 10, 10),
                 Vector3.UnitZ, Vector3.UnitY);
 
-            EffectParameters effectParameters = new EffectParameters(unlitWireframeEffect,
+            EffectParameters effectParameters = new EffectParameters(effectDictionary["unlitWireframeEffect"],
                 null, Color.White, 1);
 
             //at this point, we're ready!
@@ -780,17 +788,6 @@ namespace GDGame
             primitiveObject.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);
             primitiveObject.Transform3D.RotationInDegrees = new Vector3(0, 180, 0);
             primitiveObject.Transform3D.Translation = new Vector3(0, 0, worldScale / 2.0f);
-            objectManager.Add(primitiveObject);
-        }
-
-        private void InitGround(float worldScale)
-        {
-            //grass
-            primitiveObject = archetypalTexturedQuad.Clone() as PrimitiveObject;
-            primitiveObject.ID = "grass";
-            primitiveObject.EffectParameters.Texture = textureDictionary["grass1"];
-            primitiveObject.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);
-            primitiveObject.Transform3D.RotationInDegrees = new Vector3(90, 90, 0);
             objectManager.Add(primitiveObject);
         }
 
