@@ -128,14 +128,6 @@ namespace GDLibrary.Managers
             removeList.Add(actor);
         }
 
-        //public void Remove(DrawnActor3D actor)
-        //{
-        //    if (actor.EffectParameters.Alpha < 1)
-        //        transparentList.Remove(actor);
-        //    else
-        //        opaqueList.Remove(actor);
-        //}
-
         /// <summary>
         /// Add the actor to the appropriate list based on actor transparency
         /// </summary>
@@ -150,6 +142,17 @@ namespace GDLibrary.Managers
             {
                 opaqueList.Add(actor);
             }
+        }
+
+        /// <summary>
+        /// Add a collection of actors
+        /// </summary>
+        /// <see cref="GDLibrary.Utilities.LevelLoader.Load(Microsoft.Xna.Framework.Graphics.Texture2D, float, float, float, Vector3)"/>
+        /// <param name="list"></param>
+        public void Add(List<DrawnActor3D> list)
+        {
+            foreach (DrawnActor3D actor in list)
+                Add(actor);
         }
 
         /// <summary>

@@ -69,6 +69,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Parameters\Transform\Transform2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Parameters\Vertex\BufferedVertexData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\CollisionUtility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\LevelLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\MathUtility.cs" />
     <Compile Include="..\GDLibrary\Core\Interfaces\I3DDrawable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IVertexData.cs" />

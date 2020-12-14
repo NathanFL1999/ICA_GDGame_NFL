@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 
-namespace GDLibrary
+namespace GDLibrary.Utilities
 {
     public class CollisionUtility
     {

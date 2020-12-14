@@ -2,6 +2,7 @@
 using GDLibrary.Controllers;
 using GDLibrary.Enums;
 using GDLibrary.Interfaces;
+using GDLibrary.Utilities;
 using Microsoft.Xna.Framework;
 using System;
 
@@ -30,7 +31,7 @@ namespace GDGame.Controllers
                 //0 to 1
                 lerpFactor = lerpFactor * 0.5f + 0.5f;
 
-                drawnActor.Color = GDLibrary.MathUtility.Lerp(this.startColor, this.endColor, lerpFactor);
+                drawnActor.Color = MathUtility.Lerp(this.startColor, this.endColor, lerpFactor);
             }
 
             base.Update(gameTime, actor);
