@@ -147,7 +147,8 @@
 
 
 ### Tasks - Week 11
-- [ ] Created ICA_GDGame based on GCA codebase but with JibLibX and ModelObject removed
+- [x] Add BufferedVertexData class
+- [x] Create ICA_GDGame based on GCA codebase but with JibLibX and ModelObject removed
 - [ ] Add support for SoundCategoryType in SoundManager
 - [ ] Add CycleCamera event listener code in CameraManager
 - [ ] Static variables/enum to represent symbolic name for resolution ResolutionType.SVGA
