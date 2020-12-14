@@ -144,6 +144,10 @@
 ### Tasks - Week 10
 - [x] Add bug fix to MouseManager::GetMouseRayDirection() that was not allowing you to pick from a user-specified screenPosition
 - [x] Remove unused GraphicsDevice parameter in Draw() calls for I3DDrawable, DrawnActor3D, ModelObject and PrimitiveObject
+
+
+### Tasks - Week 11
+- [ ] Created ICA_GDGame based on GCA codebase but with JibLibX and ModelObject removed
 - [ ] Add support for SoundCategoryType in SoundManager
 - [ ] Add CycleCamera event listener code in CameraManager
 - [ ] Static variables/enum to represent symbolic name for resolution ResolutionType.SVGA
@@ -153,4 +157,3 @@
 - [ ] Add Mouse picking to MouseManager
 - [ ] Remove hard-coded (512, 384) in Controller and replace with screenCentre
 - [ ] Add tiling functionality (see grass plane)
-
