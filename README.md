@@ -1,7 +1,7 @@
 
 **For a markdown cheat sheet see [Markdown Cheat Sheet](https://www.markdownguide.org/cheat-sheet/)**
 
-## 3D Game Engine Development - [GDGame + GDLibrary](https://github.com/nmcguinness/GDGame.git)
+## 3D Game Engine Development - [ICA_GDGame + GDLibrary](https://github.com/nmcguinness/ICA_GDGame.git)
 
 ### Further Reading
 - Common screen [resolutions](https://en.wikipedia.org/wiki/Display_resolution#/media/File:Vector_Video_Standards8.svg)
