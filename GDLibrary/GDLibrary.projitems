@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Actors\Drawn\2D\UIMouseObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Actors\Drawn\2D\UITextObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Actors\Drawn\2D\UITextureObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Actors\Drawn\3D\Collidable\CollidablePrimitiveObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Actors\Drawn\3D\DrawnActor3D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Actors\Drawn\3D\PrimitiveObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Constants\LibraryConstants.cs" />

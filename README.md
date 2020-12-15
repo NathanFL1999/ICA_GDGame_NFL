@@ -153,6 +153,9 @@
 - [x] Add EventActionType.OnResetStart listener to HandleEvent in EventScheduler to allow the scheduler to restart itself by adding last event in the scheduler of type EventActionType.OnResetStart
 - [x] Add checking of targetID (taken from Parameters[0]) in EventScheduler to allow us to target a specific event scheduler 
 - [x] Add IEventHandler to formalize methods implemented by event handlers 
+
+
+
 - [x] Add LevelLoader
 - [x] Add BufferedVertexData class
 - [x] Create ICA_GDGame based on GCA codebase but with JibLibX and ModelObject removed
