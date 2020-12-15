@@ -11,6 +11,8 @@
 - Added [IEnumerable](https://docs.microsoft.com/en-us/troubleshoot/dotnet/csharp/make-class-foreach-statement) support to a class with a container to support foreach()
 - Iterating through a [dictionary](https://robertgreiner.com/iterating-through-a-dictionary-in-csharp/) used in SoundManager\:\:Dispose() and with simple/crude implementation in ContentDictionary\:\:Dispose()
 - Creating a [sealed](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/sealed) class in Cue used by SoundManager
+- Understanding [Platonic Solids](http://www.technologyuk.net/mathematics/geometry/platonic-solids.shtml)
+![sdfsdf](http://www.technologyuk.net/mathematics/geometry/images/geometry_0185.gif)
 
 ### Bugs
 - [x] Debug text in top LHC not drawing correctly
