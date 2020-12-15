@@ -16,7 +16,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
 
 namespace GDGame
@@ -613,6 +612,17 @@ namespace GDGame
 
         #region Initialization - Vertices, Archetypes, Helpers, Drawn Content(e.g. Skybox)
 
+        /// <summary>
+        /// Creates archetypes used in the game.
+        ///
+        /// What are the steps required to add a new primitive?
+        ///    1. In the VertexFactory add a function to return Vertices[]
+        ///    2. Add a new BasicEffect IFF this primitive cannot use existing effects(e.g.wireframe, unlit textured)
+        ///    3. Add the new effect to effectDictionary
+        ///    4. Create archetypal PrimitiveObject.
+        ///    5. Add archetypal object to archetypeDictionary
+        ///    6. Clone archetype, change its properties (transform, texture, color, alpha, ID) and add manually to the objectmanager or you can use LevelLoader.
+        /// </summary>
         private void InitArchetypes() //formerly InitTexturedQuad
         {
             Transform3D transform3D = null;
@@ -621,10 +631,11 @@ namespace GDGame
             PrimitiveType primitiveType;
             int primitiveCount;
 
+            #region Lit Textured Pyramid
             //lit pyramid
             transform3D = new Transform3D(Vector3.Zero, Vector3.Zero,
                  Vector3.One, Vector3.UnitZ, Vector3.UnitY);
-            effectParameters = new EffectParameters(effectDictionary["lit textured"],
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
                 textureDictionary["checkerboard"], Color.White, 1);
 
             VertexPositionNormalTexture[] vertices
@@ -636,13 +647,15 @@ namespace GDGame
                 primitiveType, primitiveCount);
 
             //now we use the "FBX" file (our vertexdata) and make a PrimitiveObject
-            PrimitiveObject primitiveObject = new PrimitiveObject("lit pyramid",
-                ActorType.Primitive, StatusType.Drawn, transform3D, effectParameters,
+            PrimitiveObject primitiveObject = new PrimitiveObject(GameConstants.Primitive_LitTexturedQuad,
+                ActorType.Primitive,
+                StatusType.Update | StatusType.Drawn,
+                transform3D, effectParameters,
                 vertexData);
             archetypeDictionary.Add(primitiveObject.ID, primitiveObject);
-            //objectManager.Add(primitiveObject);
+            #endregion Lit Textured Pyramid
 
-            #region Textured Quad
+            #region Unlit Textured Quad
             transform3D = new Transform3D(Vector3.Zero, Vector3.Zero,
                   Vector3.One, Vector3.UnitZ, Vector3.UnitY);
 
@@ -659,9 +672,9 @@ namespace GDGame
                 ActorType.Decorator,
                 StatusType.Update | StatusType.Drawn,
                 transform3D, effectParameters, vertexData));
-            #endregion Textured Quad
+            #endregion Unlit Textured Quad
 
-            #region Origin Helper
+            #region Unlit Origin Helper
             transform3D = new Transform3D(new Vector3(0, 20, 0),
                      Vector3.Zero, new Vector3(10, 10, 10),
                      Vector3.UnitZ, Vector3.UnitY);
@@ -676,9 +689,11 @@ namespace GDGame
 
             archetypeDictionary.Add(GameConstants.Primitive_WireframeOriginHelper,
                 new PrimitiveObject(GameConstants.Primitive_WireframeOriginHelper,
-                ActorType.Helper, StatusType.Drawn, transform3D, effectParameters, vertexData));
+                ActorType.Helper,
+                StatusType.Update | StatusType.Drawn,
+                transform3D, effectParameters, vertexData));
 
-            #endregion Origin Helper
+            #endregion Unlit Origin Helper
 
             //add more archetypes here...
         }
@@ -686,7 +701,7 @@ namespace GDGame
         private void InitCollidableDrawnContent(float worldScale)
         {
             //add grass plane
-            //  InitGround(worldScale);
+            InitGround(worldScale);
         }
 
         private void InitNonCollidableDrawnContent(float worldScale) //formerly InitPrimitives
@@ -695,25 +710,52 @@ namespace GDGame
             InitHelpers();
 
             //add skybox
-            //  InitSkybox(worldScale);
+            InitSkybox(worldScale);
 
             //pyramids
             InitDecorators();
+
+            //LevelLoader levelLoader = new LevelLoader(
+            //    this.archetypeDictionary, this.textureDictionary);
+
+            //List<DrawnActor3D> actorList = levelLoader.Load(
+            //    this.textureDictionary["level1"],
+            //                    10, 10, 15, Vector3.Zero);
+            //this.objectManager.Add(actorList);
         }
 
+        /// <summary>
+        /// Demos how we can clone an archetype and manually add to the object manager.
+        /// </summary>
         private void InitDecorators()
         {
-            PrimitiveObject primitiveObject
-                = archetypeDictionary["lit pyramid"].Clone() as PrimitiveObject;
-            primitiveObject.Transform3D.Scale = 1 * new Vector3(1, 1, 1);
-            primitiveObject.Transform3D.RotationInDegrees = new Vector3(-90, 0, 0);
-            objectManager.Add(primitiveObject);
+            //clone the archetypal pyramid
+            PrimitiveObject pyramidPrimitiveObject
+                = archetypeDictionary[GameConstants.Primitive_LitTexturedQuad].Clone() as PrimitiveObject;
+
+            //change it a bit
+            pyramidPrimitiveObject.ID = "some unique name for this special pyramid";
+            pyramidPrimitiveObject.Transform3D.Scale = 10 * new Vector3(1, 1, 1);
+            pyramidPrimitiveObject.Transform3D.RotationInDegrees = new Vector3(0, 0, 0);
+            pyramidPrimitiveObject.Transform3D.Translation = new Vector3(0, 10, 0);
+
+            //lets add a rotation controller so we can see all sides easily
+            pyramidPrimitiveObject.ControllerList.Add(
+                new RotationController("rot controller1", ControllerType.RotationOverTime,
+                1, new Vector3(0, 1, 0)));
+
+            pyramidPrimitiveObject.ControllerList.Add(
+               new RotationController("rot controller2", ControllerType.RotationOverTime,
+               2, new Vector3(1, 0, 0)));
+
+            //finally add it into the objectmanager after SIX(!) steps
+            objectManager.Add(pyramidPrimitiveObject);
         }
 
         private void InitHelpers()
         {
             //clone the archetype
-            DrawnActor3D originHelper = archetypeDictionary[GameConstants.Primitive_WireframeOriginHelper].Clone() as DrawnActor3D;
+            PrimitiveObject originHelper = archetypeDictionary[GameConstants.Primitive_WireframeOriginHelper].Clone() as PrimitiveObject;
             //add to the dictionary
             objectManager.Add(originHelper);
         }

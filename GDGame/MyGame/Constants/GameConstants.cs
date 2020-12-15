@@ -15,8 +15,10 @@ namespace GDGame
         #region String IDs
         public static readonly string Primitive_WireframeOriginHelper = "wireframe origin helper";
         public static readonly string Primitive_UnlitTexturedQuad = "unlit textured quad";
+        public static readonly string Primitive_LitTexturedQuad = "lit textured quad";
 
         public static readonly string Effect_UnlitTextured = "unlit textured";
+        public static readonly string Effect_LitTextured = "lit textured";
         public static readonly string Effect_UnlitWireframe = "unlit wireframe";
 
         public static readonly string Camera_NonCollidableFirstPerson = "Noncollidable First person";
@@ -50,7 +52,7 @@ namespace GDGame
 
         #region First Person Camera
 
-        public static readonly float moveSpeed = 0.1f;
+        public static readonly float moveSpeed = 0.2f;
         public static readonly float strafeSpeed = strafeSpeedMultiplier * moveSpeed;
         public static readonly float rotateSpeed = 0.01f;
 
