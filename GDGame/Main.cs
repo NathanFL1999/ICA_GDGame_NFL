@@ -738,6 +738,7 @@ namespace GDGame
             pyramidPrimitiveObject.Transform3D.Scale = 10 * new Vector3(1, 1, 1);
             pyramidPrimitiveObject.Transform3D.RotationInDegrees = new Vector3(0, 0, 0);
             pyramidPrimitiveObject.Transform3D.Translation = new Vector3(0, 10, 0);
+            pyramidPrimitiveObject.EffectParameters.Alpha = 0.5f;
 
             //lets add a rotation controller so we can see all sides easily
             pyramidPrimitiveObject.ControllerList.Add(
