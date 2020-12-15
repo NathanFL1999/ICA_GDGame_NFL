@@ -149,15 +149,13 @@
 
 
 ### Tasks - Week 11
-- [x] Add user-friendly symbolic names for strings used by cameras, controllers, effects and primitive objects in the archetype dictionaries (i.e. replace "textured quad" with GameConstants.TexturedQuad)
-
+- [x] Add a LIT pyramid in VertexFactory to demonstrate use of factory, archetype dictionary and to practice creating vertices in 3D space
+- [ ] Add user-friendly symbolic names for strings used by cameras, controllers, effects and primitive objects in the archetype dictionaries (i.e. replace "textured quad" with GameConstants.TexturedQuad)
 - [x] Add Action<IActor> and Predicate<IActor> to EventData to allow us to pass an event with an action function that will change the state of a target actor defined by the predicate
 - [x] Add UIManager::ApplyActionToActor() to allow us to target and modify a specific actor in the ui list using an event
 - [x] Add EventActionType.OnResetStart listener to HandleEvent in EventScheduler to allow the scheduler to restart itself by adding last event in the scheduler of type EventActionType.OnResetStart
 - [x] Add checking of targetID (taken from Parameters[0]) in EventScheduler to allow us to target a specific event scheduler 
 - [x] Add IEventHandler to formalize methods implemented by event handlers 
-
-
 - [x] Add LevelLoader
 - [x] Add BufferedVertexData class
 - [x] Create ICA_GDGame based on GCA codebase but with JibLibX and ModelObject removed
