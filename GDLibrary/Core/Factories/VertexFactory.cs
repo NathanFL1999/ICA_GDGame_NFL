@@ -508,17 +508,17 @@ namespace GDLibrary.Factories
 
             //underside bottom left
             vertices[0] = new VertexPositionNormalTexture(
-                new Vector3(0.5f, 0, 0.5f),
+                new Vector3(-0.5f, 0, -0.5f),
                 -Vector3.UnitY, new Vector2(0, 1)); //Vector2.UnitY
 
             //underside top left
             vertices[1] = new VertexPositionNormalTexture(
-                new Vector3(0.5f, 0, -0.5f),
+                new Vector3(-0.5f, 0, 0.5f),
                 -Vector3.UnitY, new Vector2(0, 0));
 
             //underside top right
             vertices[2] = new VertexPositionNormalTexture(
-                new Vector3(-0.5f, 0, -0.5f),
+                new Vector3(0.5f, 0, 0.5f),
                 -Vector3.UnitY, new Vector2(0, 0));
 
             return vertices;

@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 namespace GDGame
@@ -128,6 +129,14 @@ namespace GDGame
             effectDictionary.Add(GameConstants.Effect_UnlitWireframe, effect);
 
             //to do...add a new effect to draw a lit textured surface (e.g. a lit pyramid)
+            effect = new BasicEffect(_graphics.GraphicsDevice);
+            effect.TextureEnabled = true;
+            effect.LightingEnabled = true; //redundant?
+            effect.PreferPerPixelLighting = true; //cost GPU cycles
+            effect.EnableDefaultLighting();
+            //change lighting position, direction and color
+
+            effectDictionary.Add("lit textured", effect);
         }
 
         private void LoadTextures()
@@ -612,6 +621,27 @@ namespace GDGame
             PrimitiveType primitiveType;
             int primitiveCount;
 
+            //lit pyramid
+            transform3D = new Transform3D(Vector3.Zero, Vector3.Zero,
+                 Vector3.One, Vector3.UnitZ, Vector3.UnitY);
+            effectParameters = new EffectParameters(effectDictionary["lit textured"],
+                textureDictionary["checkerboard"], Color.White, 1);
+
+            VertexPositionNormalTexture[] vertices
+                = VertexFactory.GetVerticesPositionNormalTexturedPyramid(out primitiveType,
+                out primitiveCount);
+
+            //analog of the Model class in G-CA (i.e. it holdes vertices and type, count)
+            vertexData = new VertexData<VertexPositionNormalTexture>(vertices,
+                primitiveType, primitiveCount);
+
+            //now we use the "FBX" file (our vertexdata) and make a PrimitiveObject
+            PrimitiveObject primitiveObject = new PrimitiveObject("lit pyramid",
+                ActorType.Primitive, StatusType.Drawn, transform3D, effectParameters,
+                vertexData);
+            archetypeDictionary.Add(primitiveObject.ID, primitiveObject);
+            //objectManager.Add(primitiveObject);
+
             #region Textured Quad
             transform3D = new Transform3D(Vector3.Zero, Vector3.Zero,
                   Vector3.One, Vector3.UnitZ, Vector3.UnitY);
@@ -656,7 +686,7 @@ namespace GDGame
         private void InitCollidableDrawnContent(float worldScale)
         {
             //add grass plane
-            InitGround(worldScale);
+            //  InitGround(worldScale);
         }
 
         private void InitNonCollidableDrawnContent(float worldScale) //formerly InitPrimitives
@@ -665,7 +695,19 @@ namespace GDGame
             InitHelpers();
 
             //add skybox
-            InitSkybox(worldScale);
+            //  InitSkybox(worldScale);
+
+            //pyramids
+            InitDecorators();
+        }
+
+        private void InitDecorators()
+        {
+            PrimitiveObject primitiveObject
+                = archetypeDictionary["lit pyramid"].Clone() as PrimitiveObject;
+            primitiveObject.Transform3D.Scale = 1 * new Vector3(1, 1, 1);
+            primitiveObject.Transform3D.RotationInDegrees = new Vector3(-90, 0, 0);
+            objectManager.Add(primitiveObject);
         }
 
         private void InitHelpers()
