@@ -496,6 +496,18 @@ namespace GDLibrary.Factories
 
         /******************************************** Textured & Normal - Cube ********************************************/
 
+        public static VertexPositionNormalTexture[] GetVerticesPositionNormalTexturedPyramid(
+                            out PrimitiveType primitiveType,
+                                        out int primitiveCount)
+        {
+            primitiveType = PrimitiveType.TriangleList; //triangles will be separate
+            primitiveCount = 2; //2x base, 4x sides
+
+            VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[6];
+
+            return null;
+        }
+
         //adding normals - step 1 - add the vertices for the object shape
         public static VertexPositionNormalTexture[] GetVerticesPositionNormalTexturedCube(int sidelength, out PrimitiveType primitiveType, out int primitiveCount)
         {
