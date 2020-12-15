@@ -501,11 +501,27 @@ namespace GDLibrary.Factories
                                         out int primitiveCount)
         {
             primitiveType = PrimitiveType.TriangleList; //triangles will be separate
-            primitiveCount = 2; //2x base, 4x sides
+            primitiveCount = 1; //2x base, 4x sides
 
-            VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[6];
+            VertexPositionNormalTexture[] vertices
+                = new VertexPositionNormalTexture[3];
 
-            return null;
+            //underside bottom left
+            vertices[0] = new VertexPositionNormalTexture(
+                new Vector3(0.5f, 0, 0.5f),
+                -Vector3.UnitY, new Vector2(0, 1)); //Vector2.UnitY
+
+            //underside top left
+            vertices[1] = new VertexPositionNormalTexture(
+                new Vector3(0.5f, 0, -0.5f),
+                -Vector3.UnitY, new Vector2(0, 0));
+
+            //underside top right
+            vertices[2] = new VertexPositionNormalTexture(
+                new Vector3(-0.5f, 0, -0.5f),
+                -Vector3.UnitY, new Vector2(0, 0));
+
+            return vertices;
         }
 
         //adding normals - step 1 - add the vertices for the object shape
