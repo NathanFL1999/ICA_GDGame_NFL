@@ -2,6 +2,7 @@
 using GDLibrary.Enums;
 using GDLibrary.Events;
 using GDLibrary.GameComponents;
+using GDLibrary.Interfaces;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace GDLibrary.Managers
     /// (e.g. object remove, Object add, object change transparency)
     /// </summary>
     /// <see cref="GDLibrary.GameComponents.PausableDrawableGameComponent.SubscribeToEvents"/>
-    public class ObjectManager : PausableGameComponent
+    public class ObjectManager : PausableGameComponent, IEventHandler
     {
         #region Fields
 
@@ -54,7 +55,7 @@ namespace GDLibrary.Managers
 
         #region Handle Events
 
-        protected override void SubscribeToEvents()
+        public override void SubscribeToEvents()
         {
             //opacity
             EventDispatcher.Subscribe(EventCategoryType.Opacity, HandleEvent);
@@ -69,7 +70,7 @@ namespace GDLibrary.Managers
             base.SubscribeToEvents();
         }
 
-        protected override void HandleEvent(EventData eventData)
+        public override void HandleEvent(EventData eventData)
         {
             //if this event relates to adding, removing, changing an object
             if (eventData.EventCategoryType == EventCategoryType.Object)
@@ -93,7 +94,7 @@ namespace GDLibrary.Managers
                 opaqueList.Add(actor);
             }
 
-            //pass event to base (in case it is a menu event)
+            //remember to pass the eventData down so the parent class can process pause/unpause
             base.HandleEvent(eventData);
         }
 
@@ -123,11 +124,6 @@ namespace GDLibrary.Managers
 
         #endregion Handle Events
 
-        public void Remove(DrawnActor3D actor)
-        {
-            removeList.Add(actor);
-        }
-
         /// <summary>
         /// Add the actor to the appropriate list based on actor transparency
         /// </summary>
@@ -153,6 +149,15 @@ namespace GDLibrary.Managers
         {
             foreach (DrawnActor3D actor in list)
                 Add(actor);
+        }
+
+        /// <summary>
+        /// Removes an actor from the list by adding to a batch remove list which is processed before each update
+        /// </summary>
+        /// <param name="actor"></param>
+        public void Remove(DrawnActor3D actor)
+        {
+            removeList.Add(actor);
         }
 
         /// <summary>

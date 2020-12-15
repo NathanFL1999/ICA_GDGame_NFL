@@ -1,6 +1,7 @@
 ﻿using GDLibrary.Enums;
 using GDLibrary.Events;
 using GDLibrary.GameComponents;
+using GDLibrary.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using System;
@@ -30,6 +31,7 @@ namespace GDLibrary.Managers
         #endregion Fields
 
         #region Properties
+
         public string ID
         {
             get
@@ -37,6 +39,7 @@ namespace GDLibrary.Managers
                 return id;
             }
         }
+
         public SoundEffect SoundEffect
         {
             get
@@ -56,6 +59,7 @@ namespace GDLibrary.Managers
                 maxPlayCount = value > 0 ? value : 1;
             }
         }
+
         public int TimeToLiveInMs
         {
             get
@@ -67,6 +71,7 @@ namespace GDLibrary.Managers
                 timeToLiveInMs = value > 0 ? value : NO_LIMIT_SPECIFIED;
             }
         }
+
         public int MinTimeSinceLastPlayedInMs
         {
             get
@@ -78,6 +83,7 @@ namespace GDLibrary.Managers
                 minTimeSinceLastPlayedInMs = value > 0 ? value : NO_LIMIT_SPECIFIED;
             }
         }
+
         public bool IsLooped
         {
             get
@@ -113,6 +119,7 @@ namespace GDLibrary.Managers
                 volumePitchPan.Y = (value >= -1 && value <= 1) ? value : 0;
             }
         }
+
         public float Pan
         {
             get
@@ -124,6 +131,7 @@ namespace GDLibrary.Managers
                 volumePitchPan.Z = (value >= -1 && value <= 1) ? value : 0;
             }
         }
+
         public SoundCategoryType SoundCategoryType
         {
             get
@@ -161,7 +169,7 @@ namespace GDLibrary.Managers
     /// This class also demonstrates the use of the sealed keyword to prevent inheritance.
     /// </summary>
     /// <seealso cref="https://docs.monogame.net/api/Microsoft.Xna.Framework.Audio.SoundEffect.html"/>
-    public sealed class SoundManager : PausableGameComponent, IDisposable
+    public sealed class SoundManager : PausableGameComponent, IEventHandler, IDisposable
     {
         private Dictionary<string, Cue> dictionary;
         private List<KeyValuePair<string, SoundEffectInstance>> listInstances2D;
@@ -175,7 +183,7 @@ namespace GDLibrary.Managers
 
         //add events listening for Play2D etc
 
-        protected override void SubscribeToEvents()
+        public override void SubscribeToEvents()
         {
             EventDispatcher.Subscribe(EventCategoryType.Sound, HandleEvent);
 
@@ -183,7 +191,7 @@ namespace GDLibrary.Managers
             //base.SubscribeToEvents();
         }
 
-        protected override void HandleEvent(EventData eventData)
+        public override void HandleEvent(EventData eventData)
         {
             if (eventData.EventActionType == EventActionType.OnPlay2D)
             {
@@ -196,7 +204,8 @@ namespace GDLibrary.Managers
             }
             //add more if statements for each method that we want to support with events
 
-            //if we always want the SoundManager to be available then comment this line out
+            //remember to pass the eventData down so the parent class can process pause/unpause
+            //if we always want the SoundManager to be available (even in menu) then comment this line out
             //base.HandleEvent(eventData);
         }
 
@@ -209,6 +218,7 @@ namespace GDLibrary.Managers
         }
 
         #region Sound Controls
+
         public void SetMasterVolume(float value)
         {
             SoundEffect.MasterVolume = MathHelper.Clamp(value, 0, 1);

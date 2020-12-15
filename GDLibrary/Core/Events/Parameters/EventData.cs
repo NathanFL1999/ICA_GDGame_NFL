@@ -1,4 +1,5 @@
 ﻿using GDLibrary.Enums;
+using GDLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
 
@@ -13,6 +14,8 @@ namespace GDLibrary.Events
         #region Fields
         private EventCategoryType eventCategoryType;
         private EventActionType eventActionType;
+        private Action<IActor> action;
+        private Predicate<IActor> predicate;
         private object[] parameters;
         #endregion Fields
 
@@ -20,18 +23,29 @@ namespace GDLibrary.Events
         public EventCategoryType EventCategoryType { get => eventCategoryType; set => eventCategoryType = value; }
         public EventActionType EventActionType { get => eventActionType; set => eventActionType = value; }
         public object[] Parameters { get => parameters; set => parameters = value; }
+        public Action<IActor> Action { get => action; set => action = value; }
+        public Predicate<IActor> Predicate { get => predicate; set => predicate = value; }
         #endregion Properties
 
         #region Constructors & Core
 
         /// <summary>
-        /// Used for events with no attached parameters (e.g. win/lose event for single player game)
+        /// Used for events where we want to apply an action (e.g. transform/change actor state) using the action, predicate and parameters passed
         /// </summary>
         /// <param name="eventCategoryType"></param>
         /// <param name="eventActionType"></param>
+        /// <param name="action"></param>
+        /// <param name="predicate"></param>
+        /// <param name="parameters"></param>
         public EventData(EventCategoryType eventCategoryType,
-           EventActionType eventActionType) : this(eventCategoryType, eventActionType, null)
+           EventActionType eventActionType, Action<IActor> action,
+           Predicate<IActor> predicate, object[] parameters)
         {
+            EventCategoryType = eventCategoryType;
+            EventActionType = eventActionType;
+            Action = action;
+            Predicate = predicate;
+            Parameters = parameters;
         }
 
         /// <summary>
@@ -42,10 +56,8 @@ namespace GDLibrary.Events
         /// <param name="parameters"></param>
         public EventData(EventCategoryType eventCategoryType,
             EventActionType eventActionType, object[] parameters)
+            : this(eventCategoryType, eventActionType, null, null, parameters)
         {
-            EventCategoryType = eventCategoryType;
-            EventActionType = eventActionType;
-            Parameters = parameters;
         }
 
         public override bool Equals(object obj)

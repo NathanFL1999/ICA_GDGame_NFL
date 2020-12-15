@@ -1,6 +1,7 @@
 ﻿using GDLibrary.Enums;
 using GDLibrary.Events;
 using GDLibrary.GameComponents;
+using GDLibrary.Interfaces;
 using Microsoft.Xna.Framework;
 
 namespace GDLibrary.Core.Managers.State
@@ -8,23 +9,24 @@ namespace GDLibrary.Core.Managers.State
     /// <summary>
     /// Use this manager to listen for related events and perform actions in your game based on events received
     /// </summary>
-    public class MyGameStateManager : PausableGameComponent
+    public class MyGameStateManager : PausableGameComponent, IEventHandler
     {
         public MyGameStateManager(Game game, StatusType statusType) : base(game, statusType)
         {
         }
 
-        protected override void SubscribeToEvents()
+        public override void SubscribeToEvents()
         {
             //add new events here...
 
             base.SubscribeToEvents();
         }
 
-        protected override void HandleEvent(EventData eventData)
+        public override void HandleEvent(EventData eventData)
         {
             //add new if...else if statements to handle events here...
 
+            //remember to pass the eventData down so the parent class can process pause/unpause
             base.HandleEvent(eventData);
         }
 

@@ -1,5 +1,6 @@
 ﻿using GDLibrary.Enums;
 using GDLibrary.Events;
+using GDLibrary.Interfaces;
 using Microsoft.Xna.Framework;
 
 namespace GDLibrary.GameComponents
@@ -8,7 +9,7 @@ namespace GDLibrary.GameComponents
     /// Creates a class based on the DrawableGameComponent class that can be paused when the menu is shown.
     /// </summary>
     /// <see cref="GDLibrary.Managers.ObjectManager"/>
-    public class PausableDrawableGameComponent : DrawableGameComponent
+    public class PausableDrawableGameComponent : DrawableGameComponent, IEventHandler
     {
         #region Fields
         private StatusType statusType;
@@ -47,13 +48,13 @@ namespace GDLibrary.GameComponents
         /// <summary>
         /// Subscribe to any events that will affect any child class (e.g. menu pause in ObjectManager)
         /// </summary>
-        protected virtual void SubscribeToEvents()
+        public virtual void SubscribeToEvents()
         {
             //menu
             EventDispatcher.Subscribe(EventCategoryType.Menu, HandleEvent);
         }
 
-        protected virtual void HandleEvent(EventData eventData)
+        public virtual void HandleEvent(EventData eventData)
         {
             if (eventData.EventCategoryType == EventCategoryType.Menu)
             {

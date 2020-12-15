@@ -20,7 +20,7 @@ namespace GDGame.MyGame.Managers
             this.keyboardManager = keyboardManager;
         }
 
-        protected override void HandleEvent(EventData eventData)
+        public override void HandleEvent(EventData eventData)
         {
             if (eventData.EventCategoryType == EventCategoryType.Menu)
             {

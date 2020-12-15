@@ -27,13 +27,17 @@ namespace GDGame
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        //managers in the game
         private CameraManager<Camera3D> cameraManager;
-
         private ObjectManager objectManager;
         private KeyboardManager keyboardManager;
         private MouseManager mouseManager;
         private RenderManager renderManager;
+        private UIManager uiManager;
+        private MyMenuManager menuManager;
+        private SoundManager soundManager;
+
+        //used to process and deliver events received from publishers
+        private EventDispatcher eventDispatcher;
 
         //store useful game resources (e.g. effects, models, rails and curves)
         private Dictionary<string, BasicEffect> effectDictionary;
@@ -47,25 +51,14 @@ namespace GDGame
         //use normal Dictionary to store objects that do NOT need the Content.Load() method to be called (i.e. the object is not based on an asset file)
         private Dictionary<string, Transform3DCurve> transform3DCurveDictionary;
 
+        //stores the rails used by the camera
         private Dictionary<string, RailParameters> railDictionary;
+
+        //stores the archetypal primitive objects (used in Main and LevelLoader)
+        private Dictionary<string, PrimitiveObject> archetypeDictionary;
 
         //defines centre point for the mouse i.e. (w/2, h/2)
         private Vector2 screenCentre;
-
-        private VertexPositionColorTexture[] vertices;
-
-        #region Temp Vars Used For Demos
-        private PrimitiveObject archetypalTexturedQuad;
-        private PrimitiveObject primitiveObject = null;
-        private EventDispatcher eventDispatcher;
-#if DEMO
-        private Curve1D curve1D;
-        private UIManager uiManager;
-        private MyMenuManager menuManager;
-        private SoundManager soundManager;
-
-#endif
-        #endregion Temp Vars Used For Demos
 
         #endregion Fields
 
@@ -79,20 +72,6 @@ namespace GDGame
         }
 
         #endregion Constructors
-
-        #region Demo
-#if DEMO
-
-        private void DemoCurve()
-        {
-            curve1D = new Curve1D(CurveLoopType.Oscillate);
-            curve1D.Add(100, 2);
-            curve1D.Add(250, 5);
-            curve1D.Add(1500, 8);
-        }
-
-#endif
-        #endregion Demo
 
         #region Debug
 #if DEBUG
@@ -137,15 +116,18 @@ namespace GDGame
             //to do...
             BasicEffect effect = null;
 
+            //used for unlit primitives with a texture (e.g. textured quad of skybox)
             effect = new BasicEffect(_graphics.GraphicsDevice);
             effect.VertexColorEnabled = true; //otherwise we wont see RGB
             effect.TextureEnabled = true;
-            effectDictionary.Add("unlitTexturedEffect", effect);
+            effectDictionary.Add(GameConstants.Effect_UnlitTextured, effect);
 
-            //wireframe primitives with no lighting and no texture
+            //used for wireframe primitives with no lighting and no texture (e.g. origin helper)
             effect = new BasicEffect(_graphics.GraphicsDevice);
             effect.VertexColorEnabled = true;
-            effectDictionary.Add("unlitWireframeEffect", effect);
+            effectDictionary.Add(GameConstants.Effect_UnlitWireframe, effect);
+
+            //to do...add a new effect to draw a lit textured surface (e.g. a
         }
 
         private void LoadTextures()
@@ -188,36 +170,6 @@ namespace GDGame
             fontDictionary.Load("Assets/Fonts/ui");
         }
 
-        private void LoadVertices()
-        {
-            /*
-             * Note: These vertices were updated on 7.12.20 to fix a Skybox draw problem.
-             * The vertices were properly ordered (i.e. 0-3) in order to ensure all NORMALS faced forward.
-             */
-
-            vertices = new VertexPositionColorTexture[4];
-            float halfLength = 0.5f;
-            //TL
-            vertices[0] = new VertexPositionColorTexture(
-                new Vector3(-halfLength, halfLength, 0),
-                new Color(255, 255, 255, 255), new Vector2(0, 0));
-
-            //TR
-            vertices[1] = new VertexPositionColorTexture(
-                new Vector3(halfLength, halfLength, 0),
-                Color.White, new Vector2(1, 0));
-
-            //BL
-            vertices[2] = new VertexPositionColorTexture(
-                new Vector3(-halfLength, -halfLength, 0),
-                Color.White, new Vector2(0, 1));
-
-            //BR
-            vertices[3] = new VertexPositionColorTexture(
-                new Vector3(halfLength, -halfLength, 0),
-                Color.White, new Vector2(1, 1));
-        }
-
         #endregion Load - Assets
 
         #region Initialization - Graphics, Managers, Dictionaries, Cameras, Menu, UI
@@ -246,7 +198,6 @@ namespace GDGame
             //load from file or initialize assets, effects and vertices
             LoadEffects();
             LoadTextures();
-            LoadVertices();
             LoadFonts();
             LoadSounds();
 
@@ -255,7 +206,7 @@ namespace GDGame
             InitMenu();
 
             //add archetypes that can be cloned
-            InitPrimitiveArchetypes();
+            InitArchetypes();
 
             //drawn non-collidable content
             InitNonCollidableDrawnContent(worldScale);
@@ -270,15 +221,12 @@ namespace GDGame
             //cameras - notice we moved the camera creation BELOW where we created the drawn content - see DriveController
             InitCameras3D();
 
-            #region Debug & Demo
+            #region Debug
 #if DEBUG
             //debug info
             InitDebug();
 #endif
-#if DEMO
-            DemoCurve();
-#endif
-            #endregion Debug & Demo
+            #endregion Debug
 
             base.Initialize();
         }
@@ -522,6 +470,9 @@ namespace GDGame
 
             //rails - store rails used by cameras
             railDictionary = new Dictionary<string, RailParameters>();
+
+            //used to store archetypes for primitives in the game
+            archetypeDictionary = new Dictionary<string, PrimitiveObject>();
         }
 
         private void InitManagers()
@@ -577,13 +528,14 @@ namespace GDGame
             transform3D = new Transform3D(new Vector3(10, 10, 20),
                 new Vector3(0, 0, -1), Vector3.UnitY);
 
-            camera3D = new Camera3D("Noncollidable 1st person",
+            camera3D = new Camera3D(GameConstants.Camera_NonCollidableFirstPerson,
                 ActorType.Camera3D, StatusType.Update, transform3D,
-                ProjectionParameters.StandardDeepSixteenTen, new Viewport(0, 0, 1024, 768));
+                ProjectionParameters.StandardDeepSixteenTen,
+                new Viewport(0, 0, 1024, 768));
 
             //attach a controller
             camera3D.ControllerList.Add(new FirstPersonController(
-                "1st person controller A", ControllerType.FirstPerson,
+                GameConstants.Controllers_NonCollidableFirstPerson, ControllerType.FirstPerson,
                 keyboardManager, mouseManager,
                 GameConstants.moveSpeed, GameConstants.strafeSpeed, GameConstants.rotateSpeed));
             cameraManager.Add(camera3D);
@@ -595,13 +547,13 @@ namespace GDGame
             transform3D = new Transform3D(new Vector3(10, 10, 20),
                 new Vector3(0, 0, -1), Vector3.UnitY);
 
-            camera3D = new Camera3D("Noncollidable Flight",
+            camera3D = new Camera3D(GameConstants.Camera_NonCollidableFlight,
                 ActorType.Camera3D, StatusType.Update, transform3D,
                 ProjectionParameters.StandardDeepSixteenTen, new Viewport(0, 0, 1024, 768));
 
             //attach a controller
             camera3D.ControllerList.Add(new FlightCameraController(
-                "Flight controller A", ControllerType.FlightCamera,
+                GameConstants.Controllers_NonCollidableFlight, ControllerType.FlightCamera,
                 keyboardManager, mouseManager, null,
                 GameConstants.CameraMoveKeys,
                 GameConstants.moveSpeed, GameConstants.strafeSpeed, GameConstants.rotateSpeed));
@@ -615,12 +567,12 @@ namespace GDGame
                         new Vector3(0, 0, -1),
                         Vector3.UnitY);
 
-            camera3D = new Camera3D("Noncollidable security",
+            camera3D = new Camera3D(GameConstants.Camera_NonCollidableSecurity,
                 ActorType.Camera3D, StatusType.Update, transform3D,
             ProjectionParameters.StandardDeepSixteenTen, viewPort);
 
             camera3D.ControllerList.Add(new PanController(
-                "pan controller", ControllerType.Pan,
+                GameConstants.Controllers_NonCollidableSecurity, ControllerType.Pan,
                 new Vector3(1, 1, 0), new TrigonometricParameters(30, GameConstants.mediumAngularSpeed, 0)));
             cameraManager.Add(camera3D);
 
@@ -631,12 +583,12 @@ namespace GDGame
             //notice that it doesnt matter what translation, look, and up are since curve will set these
             transform3D = new Transform3D(Vector3.Zero, Vector3.Zero, Vector3.Zero);
 
-            camera3D = new Camera3D("Noncollidable curve - main arena",
+            camera3D = new Camera3D(GameConstants.Camera_NonCollidableCurveMainArena,
               ActorType.Camera3D, StatusType.Update, transform3D,
                         ProjectionParameters.StandardDeepSixteenTen, viewPort);
 
             camera3D.ControllerList.Add(
-                new Curve3DController("main arena - fly through - 1",
+                new Curve3DController(GameConstants.Controllers_NonCollidableCurveMainArena,
                 ControllerType.Curve,
                         transform3DCurveDictionary["headshake1"])); //use the curve dictionary to retrieve a transform3DCurve by id
 
@@ -650,6 +602,55 @@ namespace GDGame
         #endregion Initialization - Graphics, Managers, Dictionaries, Cameras, Menu, UI
 
         #region Initialization - Vertices, Archetypes, Helpers, Drawn Content(e.g. Skybox)
+
+        private void InitArchetypes() //formerly InitTexturedQuad
+        {
+            Transform3D transform3D = null;
+            EffectParameters effectParameters = null;
+            IVertexData vertexData = null;
+            PrimitiveType primitiveType;
+            int primitiveCount;
+
+            #region Textured Quad
+            transform3D = new Transform3D(Vector3.Zero, Vector3.Zero,
+                  Vector3.One, Vector3.UnitZ, Vector3.UnitY);
+
+            effectParameters = new EffectParameters(
+                effectDictionary[GameConstants.Effect_UnlitTextured],
+                textureDictionary["grass1"], Color.White, 1);
+
+            vertexData = new VertexData<VertexPositionColorTexture>(
+                VertexFactory.GetTextureQuadVertices(out primitiveType, out primitiveCount),
+                primitiveType, primitiveCount);
+
+            archetypeDictionary.Add(GameConstants.Primitive_UnlitTexturedQuad,
+                new PrimitiveObject(GameConstants.Primitive_UnlitTexturedQuad,
+                ActorType.Decorator,
+                StatusType.Update | StatusType.Drawn,
+                transform3D, effectParameters, vertexData));
+            #endregion Textured Quad
+
+            #region Origin Helper
+            transform3D = new Transform3D(new Vector3(0, 20, 0),
+                     Vector3.Zero, new Vector3(10, 10, 10),
+                     Vector3.UnitZ, Vector3.UnitY);
+
+            effectParameters = new EffectParameters(
+                effectDictionary[GameConstants.Effect_UnlitWireframe],
+                null, Color.White, 1);
+
+            vertexData = new VertexData<VertexPositionColor>(VertexFactory.GetVerticesPositionColorOriginHelper(
+                                    out primitiveType, out primitiveCount),
+                                    primitiveType, primitiveCount);
+
+            archetypeDictionary.Add(GameConstants.Primitive_WireframeOriginHelper,
+                new PrimitiveObject(GameConstants.Primitive_WireframeOriginHelper,
+                ActorType.Helper, StatusType.Drawn, transform3D, effectParameters, vertexData));
+
+            #endregion Origin Helper
+
+            //add more archetypes here...
+        }
 
         private void InitCollidableDrawnContent(float worldScale)
         {
@@ -666,87 +667,29 @@ namespace GDGame
             InitSkybox(worldScale);
         }
 
-        private void InitGround(float worldScale)
-        {
-            Texture2D texture = null;
-            Transform3D transform = null;
-            PrimitiveObject primitiveObject = null;
-            EffectParameters effectParameters = null;
-            IVertexData vertexData = null;
-
-            texture = textureDictionary["grass1"];
-
-            transform = new Transform3D(Vector3.Zero, new Vector3(-90, 0, 0), worldScale * Vector3.One,
-                Vector3.UnitY, -Vector3.UnitZ);
-
-            effectParameters = new EffectParameters(effectDictionary["unlitTexturedEffect"],
-                texture, Color.White, 1);
-
-            PrimitiveType primitiveType;
-            int primitiveCount;
-            VertexPositionColorTexture[] vertices = VertexFactory.GetTextureQuadVertices(out primitiveType, out primitiveCount);
-
-            vertexData = new VertexData<VertexPositionColorTexture>(vertices,
-                primitiveType, primitiveCount);
-
-            primitiveObject = new PrimitiveObject("ground", ActorType.CollidableGround,
-                StatusType.Drawn, transform, effectParameters, vertexData);
-
-            objectManager.Add(primitiveObject);
-        }
-
-        private void InitPrimitiveArchetypes() //formerly InitTexturedQuad
-        {
-            Transform3D transform3D = new Transform3D(Vector3.Zero, Vector3.Zero,
-               Vector3.One, Vector3.UnitZ, Vector3.UnitY);
-
-            EffectParameters effectParameters = new EffectParameters(effectDictionary["unlitTexturedEffect"],
-                textureDictionary["grass1"], Color.White, 1);
-
-            IVertexData vertexData = new VertexData<VertexPositionColorTexture>(
-                vertices, Microsoft.Xna.Framework.Graphics.PrimitiveType.TriangleStrip, 2);
-
-            archetypalTexturedQuad = new PrimitiveObject("texture quad",
-                ActorType.Decorator,
-                StatusType.Update | StatusType.Drawn,
-                transform3D, effectParameters, vertexData);
-        }
-
-        //VertexPositionColorTexture - 4 bytes x 3 (x,y,z) + 4 bytes x 3 (r,g,b) + 4bytes x 2 = 26 bytes
-        //VertexPositionColor -  4 bytes x 3 (x,y,z) + 4 bytes x 3 (r,g,b) = 24 bytes
         private void InitHelpers()
         {
-            //to do...add wireframe origin
-            Microsoft.Xna.Framework.Graphics.PrimitiveType primitiveType;
-            int primitiveCount;
+            //clone the archetype
+            DrawnActor3D originHelper = archetypeDictionary[GameConstants.Primitive_WireframeOriginHelper].Clone() as DrawnActor3D;
+            //add to the dictionary
+            objectManager.Add(originHelper);
+        }
 
-            //step 1 - vertices
-            VertexPositionColor[] vertices = VertexFactory.GetVerticesPositionColorOriginHelper(
-                                    out primitiveType, out primitiveCount);
-
-            //step 2 - make vertex data that provides Draw()
-            IVertexData vertexData = new VertexData<VertexPositionColor>(vertices,
-                                    primitiveType, primitiveCount);
-
-            //step 3 - make the primitive object
-            Transform3D transform3D = new Transform3D(new Vector3(0, 20, 0),
-                Vector3.Zero, new Vector3(10, 10, 10),
-                Vector3.UnitZ, Vector3.UnitY);
-
-            EffectParameters effectParameters = new EffectParameters(effectDictionary["unlitWireframeEffect"],
-                null, Color.White, 1);
-
-            //at this point, we're ready!
-            PrimitiveObject primitiveObject = new PrimitiveObject("origin helper",
-                ActorType.Helper, StatusType.Drawn, transform3D, effectParameters, vertexData);
-
+        private void InitGround(float worldScale)
+        {
+            PrimitiveObject primitiveObject = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
+            primitiveObject.EffectParameters.Texture = textureDictionary["grass1"];
+            primitiveObject.Transform3D.RotationInDegrees = new Vector3(-90, 0, 0);
+            primitiveObject.Transform3D.Scale = worldScale * Vector3.One;
             objectManager.Add(primitiveObject);
         }
 
         private void InitSkybox(float worldScale)
         {
+            PrimitiveObject primitiveObject = null;
+
             //back
-            primitiveObject = archetypalTexturedQuad.Clone() as PrimitiveObject;
+            primitiveObject = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
             //  primitiveObject.StatusType = StatusType.Off; //Experiment of the effect of StatusType
             primitiveObject.ID = "sky back";
             primitiveObject.EffectParameters.Texture = textureDictionary["back"]; ;
@@ -755,7 +698,7 @@ namespace GDGame
             objectManager.Add(primitiveObject);
 
             //left
-            primitiveObject = archetypalTexturedQuad.Clone() as PrimitiveObject;
+            primitiveObject = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
             primitiveObject.ID = "left back";
             primitiveObject.EffectParameters.Texture = textureDictionary["left"]; ;
             primitiveObject.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);
@@ -764,7 +707,7 @@ namespace GDGame
             objectManager.Add(primitiveObject);
 
             //right
-            primitiveObject = archetypalTexturedQuad.Clone() as PrimitiveObject;
+            primitiveObject = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
             primitiveObject.ID = "sky right";
             primitiveObject.EffectParameters.Texture = textureDictionary["right"];
             primitiveObject.Transform3D.Scale = new Vector3(worldScale, worldScale, 20);
@@ -773,7 +716,7 @@ namespace GDGame
             objectManager.Add(primitiveObject);
 
             //top
-            primitiveObject = archetypalTexturedQuad.Clone() as PrimitiveObject;
+            primitiveObject = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
             primitiveObject.ID = "sky top";
             primitiveObject.EffectParameters.Texture = textureDictionary["sky"];
             primitiveObject.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);
@@ -782,7 +725,7 @@ namespace GDGame
             objectManager.Add(primitiveObject);
 
             //front
-            primitiveObject = archetypalTexturedQuad.Clone() as PrimitiveObject;
+            primitiveObject = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
             primitiveObject.ID = "sky front";
             primitiveObject.EffectParameters.Texture = textureDictionary["front"];
             primitiveObject.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);

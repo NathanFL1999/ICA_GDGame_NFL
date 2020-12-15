@@ -140,7 +140,9 @@
         //processed by many managers (incl. menu, sound, object, ui, physic) and video controller
         OnStart,
 
+        //used by sound manager and other components
         OnRestart,
+
         OnVolumeDelta,
         OnVolumeSet,
         OnMute,
@@ -183,8 +185,13 @@
         OnPlay3D,
         OnObjectPicked,
         OnNoObjectPicked,
+
+        //used by event scheduler
         OnAdd,
+
         OnReset,
+        OnResetStart,
+        OnApplyActionToActor,
 
         //add more here...
     }

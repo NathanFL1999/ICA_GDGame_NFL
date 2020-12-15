@@ -12,6 +12,24 @@ namespace GDGame
         //   public static readonly Keys[] KeysThree = { Keys.U, Keys.J, Keys.H, Keys.K };
         #endregion Common
 
+        #region String IDs
+        public static readonly string Primitive_WireframeOriginHelper = "wireframe origin helper";
+        public static readonly string Primitive_UnlitTexturedQuad = "unlit textured quad";
+
+        public static readonly string Effect_UnlitTextured = "unlit textured";
+        public static readonly string Effect_UnlitWireframe = "unlit wireframe";
+
+        public static readonly string Camera_NonCollidableFirstPerson = "Noncollidable First person";
+        public static readonly string Camera_NonCollidableFlight = "Noncollidable Flight";
+        public static readonly string Camera_NonCollidableSecurity = "Noncollidable security";
+        public static readonly string Camera_NonCollidableCurveMainArena = "Noncollidable curve - main arena";
+
+        public static readonly string Controllers_NonCollidableFirstPerson = "1st person controller A";
+        public static readonly string Controllers_NonCollidableFlight = "Flight controller A";
+        public static readonly string Controllers_NonCollidableSecurity = "pan controller";
+        public static readonly string Controllers_NonCollidableCurveMainArena = "main arena - fly through - 1";
+        #endregion String IDs
+
         #region Collidable First Person Camera
 
         public static readonly Keys[] CameraMoveKeys = { Keys.W, Keys.S, Keys.A, Keys.D, //F,B,L,R

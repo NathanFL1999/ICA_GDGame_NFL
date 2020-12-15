@@ -25,7 +25,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Containers\ControllerList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Containers\EventHandlerList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Containers\Pair.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Events\Scheduler\EventSchedulerv2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Events\Scheduler\EventScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Controllers\3D\Actor\Curve3DController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Controllers\3D\Actor\DriveController.cs" />

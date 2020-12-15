@@ -7,6 +7,7 @@ namespace GDLibrary.Interfaces
     /// </summary>
     public interface IEventHandler
     {
+        void SubscribeToEvents();
         void HandleEvent(EventData eventData);
     }
 }
