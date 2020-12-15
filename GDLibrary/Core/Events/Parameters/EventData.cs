@@ -1,4 +1,5 @@
-﻿using GDLibrary.Enums;
+﻿using GDLibrary.Actors;
+using GDLibrary.Enums;
 using GDLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,8 @@ namespace GDLibrary.Events
         #region Fields
         private EventCategoryType eventCategoryType;
         private EventActionType eventActionType;
-        private Action<IActor> action;
-        private Predicate<IActor> predicate;
+        private Action<Actor> action;
+        private Predicate<Actor> predicate;
         private object[] parameters;
         #endregion Fields
 
@@ -23,8 +24,8 @@ namespace GDLibrary.Events
         public EventCategoryType EventCategoryType { get => eventCategoryType; set => eventCategoryType = value; }
         public EventActionType EventActionType { get => eventActionType; set => eventActionType = value; }
         public object[] Parameters { get => parameters; set => parameters = value; }
-        public Action<IActor> Action { get => action; set => action = value; }
-        public Predicate<IActor> Predicate { get => predicate; set => predicate = value; }
+        public Action<Actor> Action { get => action; set => action = value; }
+        public Predicate<Actor> Predicate { get => predicate; set => predicate = value; }
         #endregion Properties
 
         #region Constructors & Core
@@ -38,8 +39,8 @@ namespace GDLibrary.Events
         /// <param name="predicate"></param>
         /// <param name="parameters"></param>
         public EventData(EventCategoryType eventCategoryType,
-           EventActionType eventActionType, Action<IActor> action,
-           Predicate<IActor> predicate, object[] parameters)
+           EventActionType eventActionType, Action<Actor> action,
+           Predicate<Actor> predicate, object[] parameters)
         {
             EventCategoryType = eventCategoryType;
             EventActionType = eventActionType;

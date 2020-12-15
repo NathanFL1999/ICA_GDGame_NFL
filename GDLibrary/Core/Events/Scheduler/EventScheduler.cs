@@ -21,6 +21,13 @@ namespace GDLibrary.Events
     ///     scheduler.Add(new EventData(EventCategoryType.Camera, EventActionType.OnPlay), 7000);
     ///     scheduler.Add(new EventData(EventCategoryType.Camera, EventActionType.OnRestart), 7000);
     ///     scheduler.Add(new EventData(EventCategoryType.Camera, EventActionType.OnResume), 7000);
+    ///     scheduler.Add(new EventData(EventCategoryType.Scheduler,
+    ///     EventActionType.OnResetRestart, ["camera events"]), 60000);
+    ///
+    ///     scheduler.Add(new EventData(EventCategoryType.Scheduler,
+    ///     EventActionType.OnAdd, [eventData, 10000]), 7000);
+    ///
+    ///
     ///     scheduler.Start();
     ///
     /// In addition we can start, stop, and reset the scheduler using events e.g.

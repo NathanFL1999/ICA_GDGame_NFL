@@ -34,6 +34,12 @@ namespace GDLibrary.Managers
             removeList = new List<DrawnActor2D>();
         }
 
+        public override void SubscribeToEvents()
+        {
+            EventDispatcher.Subscribe(EventCategoryType.UI, HandleEvent);
+            //we want to subscribe to menu
+            base.SubscribeToEvents();
+        }
         public override void HandleEvent(EventData eventData)
         {
             switch (eventData.EventActionType)
@@ -57,6 +63,15 @@ namespace GDLibrary.Managers
 
         /// <summary>
         /// Applies an action to an actor found in the list based on a predicate (and action) defined in the eventData object
+        ///
+        /// Usage:
+        ///    EventDispatcher.Publish(new EventData(
+        ///         EventCategoryType.UI, EventActionType.OnApplyActionToActor,
+        ///        (actor) => actor.StatusType = StatusType.Drawn,
+        ///        (actor) => actor.ActorType == ActorType.UITextureObject
+        ///       && actor.ID.Equals("green key"), null));
+        ///
+        ///
         /// </summary>
         /// <param name="eventData"></param>
         public void ApplyActionToActor(EventData eventData)

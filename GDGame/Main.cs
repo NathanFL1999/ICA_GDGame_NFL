@@ -127,7 +127,7 @@ namespace GDGame
             effect.VertexColorEnabled = true;
             effectDictionary.Add(GameConstants.Effect_UnlitWireframe, effect);
 
-            //to do...add a new effect to draw a lit textured surface (e.g. a
+            //to do...add a new effect to draw a lit textured surface (e.g. a lit pyramid)
         }
 
         private void LoadTextures()
@@ -535,7 +535,8 @@ namespace GDGame
 
             //attach a controller
             camera3D.ControllerList.Add(new FirstPersonController(
-                GameConstants.Controllers_NonCollidableFirstPerson, ControllerType.FirstPerson,
+                GameConstants.Controllers_NonCollidableFirstPerson,
+                ControllerType.FirstPerson,
                 keyboardManager, mouseManager,
                 GameConstants.moveSpeed, GameConstants.strafeSpeed, GameConstants.rotateSpeed));
             cameraManager.Add(camera3D);
