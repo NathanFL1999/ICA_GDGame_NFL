@@ -88,7 +88,6 @@ namespace GDLibrary.Utilities
                 drawnActor3D.EffectParameters.DiffuseColor = Color.Blue;
                 drawnActor3D.EffectParameters.Alpha = 0.5f;
                 drawnActor3D.Transform3D.Translation = translation;
-
                 return drawnActor3D;
             }
             else if (color.Equals(new Color(63, 72, 204)))
