@@ -55,6 +55,8 @@ namespace GDLibrary.Controllers
             return new PanController(ID, ControllerType, rotationAxis, trigonometricParameters.Clone() as TrigonometricParameters);
         }
 
+        //to do...add Equals, GetHashCode
+
         #endregion Constructors & Core
     }
 }

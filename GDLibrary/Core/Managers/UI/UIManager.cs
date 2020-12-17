@@ -52,8 +52,12 @@ namespace GDLibrary.Managers
                     Remove(eventData.Parameters[0] as DrawnActor2D);
                     break;
 
-                case EventActionType.OnApplyActionToActor:
+                case EventActionType.OnApplyActionToFirstMatchActor:
                     ApplyActionToActor(eventData);
+                    break;
+
+                case EventActionType.OnApplyActionToAllActors:
+                    ApplyActionToAllActors(eventData);
                     break;
             }
 
@@ -62,11 +66,11 @@ namespace GDLibrary.Managers
         }
 
         /// <summary>
-        /// Applies an action to an actor found in the list based on a predicate (and action) defined in the eventData object
+        /// Applies an action to the FIRST actor found in the list based on a matching predicate (and action) defined in the eventData object
         ///
         /// Usage:
         ///    EventDispatcher.Publish(new EventData(
-        ///         EventCategoryType.UI, EventActionType.OnApplyActionToActor,
+        ///         EventCategoryType.UI, EventActionType.OnApplyActionToFirstMatchActor,
         ///        (actor) => actor.StatusType = StatusType.Drawn,
         ///        (actor) => actor.ActorType == ActorType.UITextureObject
         ///       && actor.ID.Equals("green key"), null));
@@ -85,6 +89,33 @@ namespace GDLibrary.Managers
                 }
             }
         }
+
+        /// <summary>
+        /// Applies an action to ALL actors found in the list based on a matching predicate (and action) defined in the eventData object
+        ///
+        /// Usage:
+        ///    EventDispatcher.Publish(new EventData(
+        ///         EventCategoryType.UI, EventActionType.OnApplyActionToFirstMatchActor,
+        ///        (actor) => actor.StatusType = StatusType.Drawn,
+        ///        (actor) => actor.ActorType == ActorType.UITextureObject
+        ///       && actor.ID.Equals("green key"), null));
+        ///
+        ///
+        /// </summary>
+        /// <param name="eventData"></param>
+        public void ApplyActionToAllActors(EventData eventData)
+        {
+            if (eventData.Predicate != null && eventData.Action != null)
+            {
+                List<DrawnActor2D> list = uiObjectList.FindAll(eventData.Predicate);
+                if (list != null)
+                {
+                    foreach (DrawnActor2D actor in list)
+                        eventData.Action(actor);
+                }
+            }
+        }
+
         /// <summary>
         /// Add an actor to the ui
         /// </summary>

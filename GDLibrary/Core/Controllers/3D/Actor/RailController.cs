@@ -58,5 +58,7 @@ namespace GDLibrary.Controllers
 
             // base.Update(gameTime, actor);
         }
+
+        //to do...add Clone, Equals, GetHashCode
     }
 }

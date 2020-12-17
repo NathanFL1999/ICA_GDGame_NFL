@@ -24,21 +24,22 @@
     /// <see cref="GDLibrary.Actors.Actor.Actor(string, ActorType, StatusType)"/>
     public enum ActorType : sbyte
     {
-        NonPlayer,
-        Player,    //hero (rendered using Max/Maya file)
-        Decorator, //architecture, obstacle (rendered using Max/Maya file)
-        Primitive, //make this type using IVertexData
+        Sky,
+        Ground,
+
+        NPC,    //enemy
+        PC,    //hero
+        Decorator, //architecture, obstacle
 
         Camera2D,
         Camera3D,
-
         Helper,
 
         CollidableGround,
         CollidablePickup,
         CollidableDecorator, //architecture
         CollidableCamera,
-        CollidableInventory,
+
         UITextureObject,
         UIText,
         UIMouse,
@@ -191,7 +192,8 @@
 
         OnReset,
         OnResetStart,
-        OnApplyActionToActor,
+        OnApplyActionToFirstMatchActor,
+        OnApplyActionToAllActors,
 
         //add more here...
     }

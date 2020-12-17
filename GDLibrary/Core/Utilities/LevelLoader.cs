@@ -18,17 +18,17 @@ namespace GDLibrary.Utilities
     ///     this.object3DManager.Add(actorList);
     ///
     /// </summary>
-    public class LevelLoader
+    public class LevelLoader<T> where T : DrawnActor3D
     {
         private static readonly Color ColorLevelLoaderIgnore = Color.White;
 
-        private Dictionary<string, DrawnActor3D> objectArchetypeDictionary;
+        private Dictionary<string, T> archetypeDictionary;
         private ContentDictionary<Texture2D> textureDictionary;
 
-        public LevelLoader(Dictionary<string, DrawnActor3D> objectArchetypeDictionary,
+        public LevelLoader(Dictionary<string, T> archetypeDictionary,
             ContentDictionary<Texture2D> textureDictionary)
         {
-            this.objectArchetypeDictionary = objectArchetypeDictionary;
+            this.archetypeDictionary = archetypeDictionary;
             this.textureDictionary = textureDictionary;
         }
 
@@ -40,7 +40,7 @@ namespace GDLibrary.Utilities
             texture.GetData<Color>(colorData);
 
             Color color;
-            Vector3 position;
+            Vector3 translation;
             DrawnActor3D actor;
 
             for (int y = 0; y < texture.Height; y++)
@@ -52,12 +52,12 @@ namespace GDLibrary.Utilities
                     if (!color.Equals(ColorLevelLoaderIgnore))
                     {
                         //scale allows us to increase the separation between objects in the XZ plane
-                        position = new Vector3(x * scaleX, height, y * scaleZ);
+                        translation = new Vector3(x * scaleX, height, y * scaleZ);
 
                         //the offset allows us to shift the whole set of objects in X, Y, and Z
-                        position += offset;
+                        translation += offset;
 
-                        actor = getObjectFromColor(color, position);
+                        actor = getObjectFromColor(color, translation);
 
                         if (actor != null)
                         {
@@ -71,13 +71,25 @@ namespace GDLibrary.Utilities
 
         private Random rand = new Random();
 
-        private DrawnActor3D getObjectFromColor(Color color, Vector3 position)
+        private int count = 1;
+
+        private DrawnActor3D getObjectFromColor(Color color, Vector3 translation)
         {
             //if the pixel is red then draw a tall (stretched collidable unlit cube)
             if (color.Equals(new Color(255, 0, 0)))
             {
-                //wall/boundary
-                return null;
+                PrimitiveObject archetype
+                        = archetypeDictionary["lit textured pyramid"] as PrimitiveObject;
+
+                PrimitiveObject drawnActor3D = archetype.Clone() as PrimitiveObject;
+                //change it a bit
+                drawnActor3D.ID = "pyramid " + count++;
+                drawnActor3D.Transform3D.Scale = 10 * new Vector3(3, 4, 1);
+                drawnActor3D.EffectParameters.DiffuseColor = Color.Blue;
+                drawnActor3D.EffectParameters.Alpha = 0.5f;
+                drawnActor3D.Transform3D.Translation = translation;
+
+                return drawnActor3D;
             }
             else if (color.Equals(new Color(63, 72, 204)))
             {

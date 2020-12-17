@@ -95,6 +95,9 @@ namespace GDLibrary.Controllers
             return new FirstPersonController(ID, ControllerType, KeyboardManager,
                 MouseManager, MoveSpeed, StrafeSpeed, RotationSpeed);
         }
+
+        //to do...add Equals, GetHashCode
+
         #endregion Constructors & Core
     }
 }

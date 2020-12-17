@@ -47,6 +47,9 @@ namespace GDLibrary.Controllers
             //does nothing so comment out
             //base.Update(gameTime, actor);
         }
+
+        //to do...add Clone, Equals, GetHashCode
+
         #endregion Constructors & Core
     }
 }

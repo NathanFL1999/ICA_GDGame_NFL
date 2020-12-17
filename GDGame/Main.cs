@@ -12,6 +12,7 @@ using GDLibrary.Factories;
 using GDLibrary.Interfaces;
 using GDLibrary.Managers;
 using GDLibrary.Parameters;
+using GDLibrary.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -140,6 +141,11 @@ namespace GDGame
 
         private void LoadTextures()
         {
+            //level 1 where each image 1_1, 1_2 is a different Y-axis height specificied when we use the level loader
+            textureDictionary.Load("Assets/Textures/Level/level1_1");
+            textureDictionary.Load("Assets/Textures/Level/level1_2");
+            //add more levels here...
+
             //sky
             textureDictionary.Load("Assets/Textures/Skybox/back");
             textureDictionary.Load("Assets/Textures/Skybox/left");
@@ -216,11 +222,8 @@ namespace GDGame
             //add archetypes that can be cloned
             InitArchetypes();
 
-            //drawn non-collidable content
-            InitNonCollidableDrawnContent(worldScale);
-
-            //drawn collidable content
-            InitCollidableDrawnContent(worldScale);
+            //drawn content (collidable and noncollidable together - its simpler)
+            InitLevel(worldScale);
 
             //curves and rails used by cameras
             InitCurves();
@@ -565,7 +568,9 @@ namespace GDGame
                 GameConstants.Controllers_NonCollidableFlight, ControllerType.FlightCamera,
                 keyboardManager, mouseManager, null,
                 GameConstants.CameraMoveKeys,
-                GameConstants.moveSpeed, GameConstants.strafeSpeed, GameConstants.rotateSpeed));
+                10 * GameConstants.moveSpeed,
+                10 * GameConstants.strafeSpeed,
+                GameConstants.rotateSpeed));
             cameraManager.Add(camera3D);
 
             #endregion Noncollidable Camera - Flight
@@ -632,6 +637,8 @@ namespace GDGame
             int primitiveCount;
 
             #region Lit Textured Pyramid
+
+            /*********** Transform, Vertices and VertexData ***********/
             //lit pyramid
             transform3D = new Transform3D(Vector3.Zero, Vector3.Zero,
                  Vector3.One, Vector3.UnitZ, Vector3.UnitY);
@@ -646,12 +653,21 @@ namespace GDGame
             vertexData = new VertexData<VertexPositionNormalTexture>(vertices,
                 primitiveType, primitiveCount);
 
+            /*********** PrimitiveObject ***********/
             //now we use the "FBX" file (our vertexdata) and make a PrimitiveObject
-            PrimitiveObject primitiveObject = new PrimitiveObject(GameConstants.Primitive_LitTexturedQuad,
-                ActorType.Primitive,
+            PrimitiveObject primitiveObject = new PrimitiveObject(
+                GameConstants.Primitive_LitTexturedPyramid,
+                ActorType.Decorator, //we could specify any time e.g. Pickup
                 StatusType.Update | StatusType.Drawn,
                 transform3D, effectParameters,
                 vertexData);
+
+            /*********** Controllers (optional) ***********/
+            //we could add controllers to the archetype and then all clones would have cloned controllers
+
+            //to do...add demos of controllers on archetypes
+            //ensure that the Clone() method of PrimitiveObject will Clone() all controllers
+
             archetypeDictionary.Add(primitiveObject.ID, primitiveObject);
             #endregion Lit Textured Pyramid
 
@@ -698,30 +714,47 @@ namespace GDGame
             //add more archetypes here...
         }
 
-        private void InitCollidableDrawnContent(float worldScale)
+        private void InitLevel(float worldScale)
         {
-            //add grass plane
-            InitGround(worldScale);
-        }
+            //remove any old content (e.g. on restart or next level)
+            objectManager.Clear();
 
-        private void InitNonCollidableDrawnContent(float worldScale) //formerly InitPrimitives
-        {
+            /************ Non-collidable ************/
             //adds origin helper etc
             InitHelpers();
 
             //add skybox
             InitSkybox(worldScale);
 
+            //add grass plane
+            InitGround(worldScale);
+
             //pyramids
             InitDecorators();
 
-            //LevelLoader levelLoader = new LevelLoader(
-            //    this.archetypeDictionary, this.textureDictionary);
+            /************ Collidable ************/
 
-            //List<DrawnActor3D> actorList = levelLoader.Load(
-            //    this.textureDictionary["level1"],
-            //                    10, 10, 15, Vector3.Zero);
-            //this.objectManager.Add(actorList);
+            /************ Level-loader (can be collidable or non-collidable) ************/
+
+            LevelLoader<PrimitiveObject> levelLoader = new LevelLoader<PrimitiveObject>(
+                this.archetypeDictionary, this.textureDictionary);
+            List<DrawnActor3D> actorList = null;
+
+            //add level1_1 contents
+            actorList = levelLoader.Load(
+                this.textureDictionary["level1_1"],
+                                10,     //number of in-world x-units represented by 1 pixel in image
+                                10,     //number of in-world z-units represented by 1 pixel in image
+                                20,     //y-axis height offset
+                                new Vector3(-50, 0, -150) //offset to move all new objects by
+                                );
+            this.objectManager.Add(actorList);
+
+            //clear the list otherwise when we add level1_2 we would re-add level1_1 objects to object manager
+            actorList.Clear();
+
+            //add level1_2 contents
+            //to do...
         }
 
         /// <summary>
@@ -730,27 +763,27 @@ namespace GDGame
         private void InitDecorators()
         {
             //clone the archetypal pyramid
-            PrimitiveObject pyramidPrimitiveObject
-                = archetypeDictionary[GameConstants.Primitive_LitTexturedQuad].Clone() as PrimitiveObject;
+            PrimitiveObject drawnActor3D
+                = archetypeDictionary[GameConstants.Primitive_LitTexturedPyramid].Clone() as PrimitiveObject;
 
             //change it a bit
-            pyramidPrimitiveObject.ID = "some unique name for this special pyramid";
-            pyramidPrimitiveObject.Transform3D.Scale = 10 * new Vector3(1, 1, 1);
-            pyramidPrimitiveObject.Transform3D.RotationInDegrees = new Vector3(0, 0, 0);
-            pyramidPrimitiveObject.Transform3D.Translation = new Vector3(0, 10, 0);
-            pyramidPrimitiveObject.EffectParameters.Alpha = 0.5f;
+            drawnActor3D.ID = "pyramid1";
+            drawnActor3D.Transform3D.Scale = 10 * new Vector3(1, 1, 1);
+            drawnActor3D.Transform3D.RotationInDegrees = new Vector3(0, 0, 0);
+            drawnActor3D.Transform3D.Translation = new Vector3(0, 10, 0);
+            drawnActor3D.EffectParameters.Alpha = 0.5f;
 
             //lets add a rotation controller so we can see all sides easily
-            pyramidPrimitiveObject.ControllerList.Add(
+            drawnActor3D.ControllerList.Add(
                 new RotationController("rot controller1", ControllerType.RotationOverTime,
                 1, new Vector3(0, 1, 0)));
 
-            pyramidPrimitiveObject.ControllerList.Add(
+            drawnActor3D.ControllerList.Add(
                new RotationController("rot controller2", ControllerType.RotationOverTime,
                2, new Vector3(1, 0, 0)));
 
             //finally add it into the objectmanager after SIX(!) steps
-            objectManager.Add(pyramidPrimitiveObject);
+            objectManager.Add(drawnActor3D);
         }
 
         private void InitHelpers()
@@ -763,61 +796,68 @@ namespace GDGame
 
         private void InitGround(float worldScale)
         {
-            PrimitiveObject primitiveObject = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
-            primitiveObject.EffectParameters.Texture = textureDictionary["grass1"];
-            primitiveObject.Transform3D.RotationInDegrees = new Vector3(-90, 0, 0);
-            primitiveObject.Transform3D.Scale = worldScale * Vector3.One;
-            objectManager.Add(primitiveObject);
+            PrimitiveObject drawnActor3D = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
+            drawnActor3D.ActorType = ActorType.Ground;
+            drawnActor3D.EffectParameters.Texture = textureDictionary["grass1"];
+            drawnActor3D.Transform3D.RotationInDegrees = new Vector3(-90, 0, 0);
+            drawnActor3D.Transform3D.Scale = worldScale * Vector3.One;
+            objectManager.Add(drawnActor3D);
         }
 
         private void InitSkybox(float worldScale)
         {
-            PrimitiveObject primitiveObject = null;
+            PrimitiveObject drawnActor3D = null;
 
             //back
-            primitiveObject = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
+            drawnActor3D = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
+            drawnActor3D.ActorType = ActorType.Sky;
+
             //  primitiveObject.StatusType = StatusType.Off; //Experiment of the effect of StatusType
-            primitiveObject.ID = "sky back";
-            primitiveObject.EffectParameters.Texture = textureDictionary["back"]; ;
-            primitiveObject.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);
-            primitiveObject.Transform3D.Translation = new Vector3(0, 0, -worldScale / 2.0f);
-            objectManager.Add(primitiveObject);
+            drawnActor3D.ID = "sky back";
+            drawnActor3D.EffectParameters.Texture = textureDictionary["back"]; ;
+            drawnActor3D.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);
+            drawnActor3D.Transform3D.Translation = new Vector3(0, 0, -worldScale / 2.0f);
+            objectManager.Add(drawnActor3D);
 
             //left
-            primitiveObject = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
-            primitiveObject.ID = "left back";
-            primitiveObject.EffectParameters.Texture = textureDictionary["left"]; ;
-            primitiveObject.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);
-            primitiveObject.Transform3D.RotationInDegrees = new Vector3(0, 90, 0);
-            primitiveObject.Transform3D.Translation = new Vector3(-worldScale / 2.0f, 0, 0);
-            objectManager.Add(primitiveObject);
+            drawnActor3D = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
+            drawnActor3D.ActorType = ActorType.Sky;
+            drawnActor3D.ID = "left back";
+            drawnActor3D.EffectParameters.Texture = textureDictionary["left"]; ;
+            drawnActor3D.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);
+            drawnActor3D.Transform3D.RotationInDegrees = new Vector3(0, 90, 0);
+            drawnActor3D.Transform3D.Translation = new Vector3(-worldScale / 2.0f, 0, 0);
+            objectManager.Add(drawnActor3D);
 
             //right
-            primitiveObject = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
-            primitiveObject.ID = "sky right";
-            primitiveObject.EffectParameters.Texture = textureDictionary["right"];
-            primitiveObject.Transform3D.Scale = new Vector3(worldScale, worldScale, 20);
-            primitiveObject.Transform3D.RotationInDegrees = new Vector3(0, -90, 0);
-            primitiveObject.Transform3D.Translation = new Vector3(worldScale / 2.0f, 0, 0);
-            objectManager.Add(primitiveObject);
+            drawnActor3D = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
+            drawnActor3D.ActorType = ActorType.Sky;
+            drawnActor3D.ID = "sky right";
+            drawnActor3D.EffectParameters.Texture = textureDictionary["right"];
+            drawnActor3D.Transform3D.Scale = new Vector3(worldScale, worldScale, 20);
+            drawnActor3D.Transform3D.RotationInDegrees = new Vector3(0, -90, 0);
+            drawnActor3D.Transform3D.Translation = new Vector3(worldScale / 2.0f, 0, 0);
+            objectManager.Add(drawnActor3D);
 
             //top
-            primitiveObject = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
-            primitiveObject.ID = "sky top";
-            primitiveObject.EffectParameters.Texture = textureDictionary["sky"];
-            primitiveObject.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);
-            primitiveObject.Transform3D.RotationInDegrees = new Vector3(90, -90, 0);
-            primitiveObject.Transform3D.Translation = new Vector3(0, worldScale / 2.0f, 0);
-            objectManager.Add(primitiveObject);
+            drawnActor3D = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
+            drawnActor3D.ActorType = ActorType.Sky;
+            drawnActor3D.ID = "sky top";
+            drawnActor3D.EffectParameters.Texture = textureDictionary["sky"];
+            drawnActor3D.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);
+            drawnActor3D.Transform3D.RotationInDegrees = new Vector3(90, -90, 0);
+            drawnActor3D.Transform3D.Translation = new Vector3(0, worldScale / 2.0f, 0);
+            objectManager.Add(drawnActor3D);
 
             //front
-            primitiveObject = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
-            primitiveObject.ID = "sky front";
-            primitiveObject.EffectParameters.Texture = textureDictionary["front"];
-            primitiveObject.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);
-            primitiveObject.Transform3D.RotationInDegrees = new Vector3(0, 180, 0);
-            primitiveObject.Transform3D.Translation = new Vector3(0, 0, worldScale / 2.0f);
-            objectManager.Add(primitiveObject);
+            drawnActor3D = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
+            drawnActor3D.ActorType = ActorType.Sky;
+            drawnActor3D.ID = "sky front";
+            drawnActor3D.EffectParameters.Texture = textureDictionary["front"];
+            drawnActor3D.Transform3D.Scale = new Vector3(worldScale, worldScale, 1);
+            drawnActor3D.Transform3D.RotationInDegrees = new Vector3(0, 180, 0);
+            drawnActor3D.Transform3D.Translation = new Vector3(0, 0, worldScale / 2.0f);
+            objectManager.Add(drawnActor3D);
         }
 
         #endregion Initialization - Vertices, Archetypes, Helpers, Drawn Content(e.g. Skybox)
@@ -852,6 +892,20 @@ namespace GDGame
             }
             #region Demo
 #if DEMO
+
+            #region Object Manager
+            if (keyboardManager.IsFirstKeyPress(Keys.R))
+            {
+                EventDispatcher.Publish(new EventData(
+                EventCategoryType.Object,
+                EventActionType.OnApplyActionToFirstMatchActor,
+                (actor) => actor.StatusType = StatusType.Off, //Action
+                (actor) => actor.ActorType == ActorType.Decorator, //Predicate
+                null //parameters
+                ));
+            }
+            #endregion Object Manager
+
             #region Sound Demos
             if (keyboardManager.IsFirstKeyPress(Keys.F1))
             {
@@ -943,6 +997,7 @@ namespace GDGame
                     EventActionType.OnCameraCycle, null));
             }
             #endregion Camera
+
 #endif
             #endregion Demo
 

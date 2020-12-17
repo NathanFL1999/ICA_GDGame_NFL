@@ -144,6 +144,6 @@ namespace GDLibrary
 
         #endregion Constructors & Core
 
-        //Add Equals, Clone, ToString, GetHashCode...
+        //to do...add Clone, Equals, GetHashCode
     }
 }

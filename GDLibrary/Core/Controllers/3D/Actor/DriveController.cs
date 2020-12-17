@@ -64,5 +64,7 @@ namespace GDLibrary.Controllers
             //apply the forward/backward movement
             parent.Transform3D.TranslateBy(moveVector * gameTime.ElapsedGameTime.Milliseconds);
         }
+
+        //to do...add Clone, Equals, GetHashCode
     }
 }

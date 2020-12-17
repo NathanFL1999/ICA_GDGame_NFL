@@ -83,6 +83,7 @@ namespace GDLibrary.Controllers
                 this.MoveSpeed, this.StrafeSpeed, this.RotationSpeed);
         }
 
+        //to do...add Equals, GetHashCode
         #endregion Constructors & Core
     }
 }

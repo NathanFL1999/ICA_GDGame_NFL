@@ -72,52 +72,113 @@ namespace GDLibrary.Managers
 
         public override void HandleEvent(EventData eventData)
         {
-            //if this event relates to adding, removing, changing an object
-            if (eventData.EventCategoryType == EventCategoryType.Object)
+            DrawnActor3D actor = null;
+
+            switch (eventData.EventActionType)
             {
-                HandleObjectCategoryEvent(eventData);
-            }
-            else if (eventData.EventCategoryType == EventCategoryType.Player)
-            {
-                HandlePlayerCategoryEvent(eventData);
-            }
-            else if (eventData.EventActionType == EventActionType.OnOpaqueToTransparent)
-            {
-                DrawnActor3D actor = eventData.Parameters[0] as DrawnActor3D;
-                opaqueList.Remove(actor);
-                transparentList.Add(actor);
-            }
-            else if (eventData.EventActionType == EventActionType.OnTransparentToOpaque)
-            {
-                DrawnActor3D actor = eventData.Parameters[0] as DrawnActor3D;
-                transparentList.Remove(actor);
-                opaqueList.Add(actor);
+                case EventActionType.OnWin:
+                    //call code to handle win here...
+                    break;
+
+                case EventActionType.OnLose:
+                    //call code to handle win here...
+                    break;
+
+                case EventActionType.OnAddActor:
+                    Add(eventData.Parameters[0] as DrawnActor3D);
+                    break;
+
+                case EventActionType.OnRemoveActor:
+                    Remove(eventData.Parameters[0] as DrawnActor3D);
+                    break;
+
+                case EventActionType.OnOpaqueToTransparent:
+                    actor = eventData.Parameters[0] as DrawnActor3D;
+                    opaqueList.Remove(actor);
+                    transparentList.Add(actor);
+                    break;
+
+                case EventActionType.OnTransparentToOpaque:
+                    actor = eventData.Parameters[0] as DrawnActor3D;
+                    transparentList.Remove(actor);
+                    opaqueList.Add(actor);
+                    break;
+
+                case EventActionType.OnApplyActionToFirstMatchActor:
+                    ApplyActionToActor(eventData);
+                    break;
+
+                case EventActionType.OnApplyActionToAllActors:
+                    ApplyActionToAllActors(eventData);
+                    break;
             }
 
             //remember to pass the eventData down so the parent class can process pause/unpause
             base.HandleEvent(eventData);
         }
 
-        private void HandlePlayerCategoryEvent(EventData eventData)
+        /// <summary>
+        /// Applies an action to an actor found in the object manager based on a predicate (and action) defined in the eventData object
+        ///
+        /// Usage:
+        ///    EventDispatcher.Publish(new EventData(
+        ///         EventCategoryType.Object, EventActionType.OnApplyActionToActor,
+        ///        (actor) => actor.StatusType = StatusType.Drawn,
+        ///        (actor) => actor.ActorType == ActorType.Decorator
+        ///       && actor.ID.Equals("green key"), null));
+        ///
+        ///
+        /// </summary>
+        /// <param name="eventData"></param>
+        private void ApplyActionToActor(EventData eventData)
         {
-            if (eventData.EventActionType == EventActionType.OnWin)
+            if (eventData.Predicate != null && eventData.Action != null)
             {
-                //gets params and add win animation
+                DrawnActor3D actor = null;
+
+                //we need to look in both lists for the actor since we dont know which it is in
+                actor = opaqueList.Find(eventData.Predicate);
+                if (actor != null)
+                    eventData.Action(actor);
+
+                actor = transparentList.Find(eventData.Predicate);
+                if (actor != null)
+                    eventData.Action(actor);
             }
         }
 
-        private void HandleObjectCategoryEvent(EventData eventData)
+        /// <summary>
+        /// Applies an action to ALL actors found in the list based on a matching predicate (and action) defined in the eventData object
+        ///
+        /// Usage:
+        ///    EventDispatcher.Publish(new EventData(
+        ///         EventCategoryType.UI, EventActionType.OnApplyActionToFirstMatchActor,
+        ///        (actor) => actor.StatusType = StatusType.Drawn,
+        ///        (actor) => actor.ActorType == ActorType.UITextureObject
+        ///       && actor.ID.Equals("green key"), null));
+        ///
+        ///
+        /// </summary>
+        /// <param name="eventData"></param>
+        public void ApplyActionToAllActors(EventData eventData)
         {
-            if (eventData.EventActionType == EventActionType.OnRemoveActor)
+            if (eventData.Predicate != null && eventData.Action != null)
             {
-                Remove(eventData.Parameters[0] as DrawnActor3D);
-            }
-            else if (eventData.EventActionType == EventActionType.OnAddActor)
-            {
-                DrawnActor3D drawnActor3D = eventData.Parameters[0] as DrawnActor3D;
-                if (drawnActor3D != null)
+                List<DrawnActor3D> list = null;
+
+                //we need to look in both lists for the actor since we dont know which it is in
+                list = opaqueList.FindAll(eventData.Predicate);
+                if (list != null)
                 {
-                    Add(drawnActor3D);
+                    foreach (DrawnActor3D actor in list)
+                        eventData.Action(actor);
+                }
+
+                list = transparentList.FindAll(eventData.Predicate);
+                if (list != null)
+                {
+                    foreach (DrawnActor3D actor in list)
+                        eventData.Action(actor);
                 }
             }
         }
@@ -130,6 +191,9 @@ namespace GDLibrary.Managers
         /// <param name="actor"></param>
         public void Add(DrawnActor3D actor)
         {
+            if (actor == null)
+                return;
+
             if (actor.EffectParameters.Alpha < 1)
             {
                 transparentList.Add(actor);
@@ -147,6 +211,9 @@ namespace GDLibrary.Managers
         /// <param name="list"></param>
         public void Add(List<DrawnActor3D> list)
         {
+            if (list == null)
+                return;
+
             foreach (DrawnActor3D actor in list)
                 Add(actor);
         }
@@ -157,6 +224,9 @@ namespace GDLibrary.Managers
         /// <param name="actor"></param>
         public void Remove(DrawnActor3D actor)
         {
+            if (actor == null)
+                return;
+
             removeList.Add(actor);
         }
 
@@ -246,6 +316,14 @@ namespace GDLibrary.Managers
             removeList.Clear();
         }
 
+        /// <summary>
+        /// Clears all content - Use when we restart or start next level (e.g. level 2)
+        /// </summary>
+        public void Clear()
+        {
+            opaqueList.Clear();
+            transparentList.Clear();
+        }
         #endregion Constructors & Core
     }
 }
