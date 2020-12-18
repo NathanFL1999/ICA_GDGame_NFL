@@ -15,6 +15,7 @@ namespace GDLibrary.Actors
         #endregion Variables
 
         #region Properties
+
         public PickupParameters PickupParameters
         {
             get
@@ -26,6 +27,7 @@ namespace GDLibrary.Actors
                 pickupParameters = value;
             }
         }
+
         #endregion Properties
 
         //used to draw collidable primitives that a value associated with them e.g. health
@@ -44,9 +46,9 @@ namespace GDLibrary.Actors
         {
             return new CollidablePickupObject("clone - " + ID, //deep
              ActorType, //deep
+             StatusType, //deep
              Transform3D.Clone() as Transform3D, //deep
              EffectParameters.Clone() as EffectParameters, //deep
-             StatusType, //deep
              this.IVertexData, //shallow - its ok if objects refer to the same vertices
              CollisionPrimitive.Clone() as ICollisionPrimitive, //deep
              ObjectManager, //shallow - reference
@@ -65,9 +67,11 @@ namespace GDLibrary.Actors
 
         //an optional array to store multiple parameters (used for play with sound/video when we pickup this object)
         private object[] additionalParameters;
+
         #endregion Fields
 
         #region Properties
+
         public string Description
         {
             get
@@ -79,6 +83,7 @@ namespace GDLibrary.Actors
                 description = (value.Length != 0) ? value : "no description specified";
             }
         }
+
         public float Value
         {
             get
@@ -90,6 +95,7 @@ namespace GDLibrary.Actors
                 this.value = (value >= 0) ? value : 0;
             }
         }
+
         public object[] AdditionalParameters
         {
             get
