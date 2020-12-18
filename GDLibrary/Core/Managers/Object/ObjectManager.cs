@@ -173,6 +173,7 @@ namespace GDLibrary.Managers
                     foreach (DrawnActor3D actor in list)
                         eventData.Action(actor);
                 }
+                // list.Clear();
 
                 list = transparentList.FindAll(eventData.Predicate);
                 if (list != null)

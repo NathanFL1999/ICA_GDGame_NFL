@@ -1,4 +1,5 @@
-﻿using GDLibrary.Enums;
+﻿using GDLibrary.Controllers;
+using GDLibrary.Enums;
 using GDLibrary.Interfaces;
 using GDLibrary.Parameters;
 using Microsoft.Xna.Framework;
@@ -51,9 +52,18 @@ namespace GDLibrary.Actors
 
         public new object Clone()
         {
-            return new PrimitiveObject(ID, ActorType, StatusType, Transform3D.Clone() as Transform3D,
+            PrimitiveObject clone = new PrimitiveObject(ID, ActorType, StatusType, Transform3D.Clone() as Transform3D,
                 EffectParameters.Clone() as EffectParameters, vertexData.Clone()
                 as IVertexData);
+
+            //if we ever want to clone prims that ALREADY have controllers
+            //then we need to add cloning of controllers here
+            foreach (Controller controller in this.ControllerList)
+            {
+                clone.ControllerList.Add(controller.Clone() as Controller);
+            }
+
+            return clone;
         }
 
         public override bool Equals(object obj)

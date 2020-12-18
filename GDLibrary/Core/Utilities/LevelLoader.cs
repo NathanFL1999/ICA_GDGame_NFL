@@ -82,15 +82,20 @@ namespace GDLibrary.Utilities
                         = archetypeDictionary["lit textured pyramid"] as PrimitiveObject;
 
                 PrimitiveObject drawnActor3D = archetype.Clone() as PrimitiveObject;
+
+                //   PrimitiveObject drawnActor3D
+                //       = archetypeDictionary["lit textured pyramid"].Clone() as PrimitiveObject;
+
                 //change it a bit
                 drawnActor3D.ID = "pyramid " + count++;
                 drawnActor3D.Transform3D.Scale = 10 * new Vector3(3, 4, 1);
                 drawnActor3D.EffectParameters.DiffuseColor = Color.Blue;
                 drawnActor3D.EffectParameters.Alpha = 0.5f;
                 drawnActor3D.Transform3D.Translation = translation;
+                drawnActor3D.Transform3D.RotationInDegrees = new Vector3(0, 0, 0);
                 return drawnActor3D;
             }
-            else if (color.Equals(new Color(63, 72, 204)))
+            else if (color.Equals(new Color(0, 0, 255)))
             {
                 //enemy instance
                 return null;

@@ -658,12 +658,15 @@ namespace GDGame
             PrimitiveObject primitiveObject = new PrimitiveObject(
                 GameConstants.Primitive_LitTexturedPyramid,
                 ActorType.Decorator, //we could specify any time e.g. Pickup
-                StatusType.Update | StatusType.Drawn,
+                StatusType.Drawn,
                 transform3D, effectParameters,
                 vertexData);
 
             /*********** Controllers (optional) ***********/
             //we could add controllers to the archetype and then all clones would have cloned controllers
+            //  drawnActor3D.ControllerList.Add(
+            //new RotationController("rot controller1", ControllerType.RotationOverTime,
+            //1, new Vector3(0, 1, 0)));
 
             //to do...add demos of controllers on archetypes
             //ensure that the Clone() method of PrimitiveObject will Clone() all controllers
@@ -714,7 +717,7 @@ namespace GDGame
             //add more archetypes here...
         }
 
-        private void InitLevel(float worldScale)
+        private void InitLevel(float worldScale)//, List<string> levelNames)
         {
             //remove any old content (e.g. on restart or next level)
             objectManager.Clear();
@@ -754,7 +757,14 @@ namespace GDGame
             actorList.Clear();
 
             //add level1_2 contents
-            //to do...
+            actorList = levelLoader.Load(
+             this.textureDictionary["level1_2"],
+                             10,     //number of in-world x-units represented by 1 pixel in image
+                             10,     //number of in-world z-units represented by 1 pixel in image
+                             40,     //y-axis height offset
+                             new Vector3(-50, 0, -150) //offset to move all new objects by
+                             );
+            this.objectManager.Add(actorList);
         }
 
         /// <summary>
@@ -778,9 +788,9 @@ namespace GDGame
                 new RotationController("rot controller1", ControllerType.RotationOverTime,
                 1, new Vector3(0, 1, 0)));
 
-            drawnActor3D.ControllerList.Add(
-               new RotationController("rot controller2", ControllerType.RotationOverTime,
-               2, new Vector3(1, 0, 0)));
+            //drawnActor3D.ControllerList.Add(
+            //   new RotationController("rot controller2", ControllerType.RotationOverTime,
+            //   2, new Vector3(1, 0, 0)));
 
             //finally add it into the objectmanager after SIX(!) steps
             objectManager.Add(drawnActor3D);
@@ -899,8 +909,9 @@ namespace GDGame
                 EventDispatcher.Publish(new EventData(
                 EventCategoryType.Object,
                 EventActionType.OnApplyActionToFirstMatchActor,
-                (actor) => actor.StatusType = StatusType.Off, //Action
-                (actor) => actor.ActorType == ActorType.Decorator, //Predicate
+                (actor) => actor.StatusType = StatusType.Drawn | StatusType.Update, //Action
+                (actor) => actor.ActorType == ActorType.Decorator
+                && actor.ID.Equals("pyramid1"), //Predicate
                 null //parameters
                 ));
             }
