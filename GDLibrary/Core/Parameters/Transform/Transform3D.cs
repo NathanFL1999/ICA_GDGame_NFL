@@ -21,8 +21,8 @@ namespace GDLibrary.Parameters
         #endregion Fields
 
         #region Properties
-        public Vector3 TranslateIncrement { get; internal set; }
-        public float RotateIncrement { get; internal set; }
+        public Vector3 TranslateIncrement { get; set; }
+        public float RotateIncrement { get; set; }
 
         public Matrix Orientation
         {

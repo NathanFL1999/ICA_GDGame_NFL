@@ -737,6 +737,13 @@ namespace GDGame
 
             /************ Collidable ************/
 
+            Transform3D transform3D = new Transform3D(new Vector3(0, 5, 0), Vector3.UnitZ, Vector3.UnitY);
+            BoxCollisionPrimitive boxPrim = new BoxCollisionPrimitive(transform3D);
+
+            CollidablePrimitiveObject collPrimObj = new CollidablePrimitiveObject("id",
+                ActorType.CollidableDecorator, StatusType.Drawn, transform3D,
+                effectParameters, vertexData, boxPrim, this.objectManager);
+
             /************ Level-loader (can be collidable or non-collidable) ************/
 
             LevelLoader<PrimitiveObject> levelLoader = new LevelLoader<PrimitiveObject>(

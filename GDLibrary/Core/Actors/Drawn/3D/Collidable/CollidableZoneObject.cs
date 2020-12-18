@@ -10,7 +10,7 @@ namespace GDLibrary.Actors
     /// BoundingSphere or AA BoundingBox. It does NOT have an associated model.
     /// We can use this class to create activation zones e.g. for camera switching or event generation
     /// </summary>
-    public class ColliableZoneObject : Actor3D
+    public class CollidableZoneObject : Actor3D
     {
         #region Variables
         private ICollisionPrimitive collisionPrimitive;
@@ -30,7 +30,7 @@ namespace GDLibrary.Actors
         }
         #endregion Properties
 
-        public ColliableZoneObject(string id, ActorType actorType,
+        public CollidableZoneObject(string id, ActorType actorType,
             StatusType statusType, Transform3D transform,
             ICollisionPrimitive collisionPrimitive)
             : base(id, actorType, statusType, transform)

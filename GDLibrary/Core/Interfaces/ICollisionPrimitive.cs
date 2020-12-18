@@ -14,6 +14,8 @@ namespace GDLibrary.Interfaces
         bool Intersects(BoundingFrustum frustum);
         bool Intersects(Ray ray);
         bool Intersects(ICollisionPrimitive collisionPrimitive);
+
+        //projected/predicted CD test
         bool Intersects(ICollisionPrimitive collisionPrimitive, Vector3 translation);
         bool Intersects(Ray ray, out float? distance);
         void Update(GameTime gameTime, Transform3D transform);

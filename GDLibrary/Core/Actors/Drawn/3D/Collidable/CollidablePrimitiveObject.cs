@@ -113,15 +113,15 @@ namespace GDLibrary.Actors
                 if (actor3D is CollidablePrimitiveObject)
                 {
                     CollidablePrimitiveObject collidableObject = actor3D as CollidablePrimitiveObject;
-                    if (CollisionPrimitive.Intersects(collidableObject.CollisionPrimitive, this.Transform3D.TranslateIncrement))
+                    if (CollisionPrimitive.Intersects(collidableObject.CollisionPrimitive, Transform3D.TranslateIncrement))
                     {
                         return collidableObject;
                     }
                 }
-                else if (actor3D is ColliableZoneObject)
+                else if (actor3D is CollidableZoneObject)
                 {
-                    ColliableZoneObject zoneObject = actor3D as ColliableZoneObject;
-                    if (CollisionPrimitive.Intersects(zoneObject.CollisionPrimitive, this.Transform3D.TranslateIncrement))
+                    CollidableZoneObject zoneObject = actor3D as CollidableZoneObject;
+                    if (CollisionPrimitive.Intersects(zoneObject.CollisionPrimitive, Transform3D.TranslateIncrement))
                     {
                         return zoneObject;
                     }

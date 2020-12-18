@@ -41,7 +41,8 @@ namespace GDLibrary.Parameters
         #endregion Properties
 
         //allows developer to pass in vertices AND buffer - more efficient since buffer is defined ONCE outside of the object instead of a new VertexBuffer for EACH instance of the class
-        public BufferedVertexData(GraphicsDevice graphicsDevice, T[] vertices, VertexBuffer vertexBuffer, PrimitiveType primitiveType, int primitiveCount)
+        public BufferedVertexData(GraphicsDevice graphicsDevice, T[] vertices,
+            VertexBuffer vertexBuffer, PrimitiveType primitiveType, int primitiveCount)
             : base(vertices, primitiveType, primitiveCount)
         {
             this.graphicsDevice = graphicsDevice;
@@ -52,11 +53,14 @@ namespace GDLibrary.Parameters
         }
 
         //buffer is created INSIDE the class so each class has a buffer - not efficient
-        public BufferedVertexData(GraphicsDevice graphicsDevice, T[] vertices, PrimitiveType primitiveType, int primitiveCount)
+        public BufferedVertexData(GraphicsDevice graphicsDevice,
+            T[] vertices, PrimitiveType primitiveType, int primitiveCount)
             : base(vertices, primitiveType, primitiveCount)
         {
             this.graphicsDevice = graphicsDevice;
-            this.VertexBuffer = new VertexBuffer(graphicsDevice, typeof(T), vertices.Length, BufferUsage.None);
+            this.VertexBuffer = new VertexBuffer(graphicsDevice,
+                typeof(T), //need type to calculate "stride" of the underlying vertextype
+                vertices.Length, BufferUsage.None);
 
             //set data on the reserved space
             this.vertexBuffer.SetData<T>(this.Vertices);

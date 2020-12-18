@@ -56,12 +56,39 @@ namespace GDLibrary
             base.Update(gameTime);
         }
 
+        protected override void HandleInput(GameTime gameTime)
+        {
+            if (keyboardManager.IsKeyDown(moveKeys[0])) //Forward
+            {
+                Transform3D.TranslateIncrement
+                    = Transform3D.Look * gameTime.ElapsedGameTime.Milliseconds
+                            * moveSpeed;
+            }
+            else if (keyboardManager.IsKeyDown(moveKeys[1])) //Backward
+            {
+                Transform3D.TranslateIncrement
+                   = -Transform3D.Look * gameTime.ElapsedGameTime.Milliseconds
+                           * moveSpeed;
+            }
+
+            if (keyboardManager.IsKeyDown(moveKeys[2])) //Left
+            {
+                Transform3D.RotateIncrement = gameTime.ElapsedGameTime.Milliseconds * rotationSpeed;
+            }
+            else if (keyboardManager.IsKeyDown(moveKeys[3])) //Right
+            {
+                Transform3D.RotateIncrement = -gameTime.ElapsedGameTime.Milliseconds * rotationSpeed;
+            }
+        }
+
+        /********************************************************************************************/
+
         //this is where you write the application specific CDCR response for your game
         protected override void HandleCollisionResponse(Actor collidee)
         {
-            if (collidee is ColliableZoneObject)
+            if (collidee is CollidableZoneObject)
             {
-                ColliableZoneObject simpleZoneObject = collidee as ColliableZoneObject;
+                CollidableZoneObject simpleZoneObject = collidee as CollidableZoneObject;
 
                 //do something based on the zone type - see Main::InitializeCollidableZones() for ID
                 if (simpleZoneObject.ID.Equals("camera trigger zone 1"))
@@ -88,31 +115,6 @@ namespace GDLibrary
                 {
                     (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Blue;
                 }
-            }
-        }
-
-        protected override void HandleInput(GameTime gameTime)
-        {
-            if (keyboardManager.IsKeyDown(moveKeys[0])) //Forward
-            {
-                Transform3D.TranslateIncrement
-                    = Transform3D.Look * gameTime.ElapsedGameTime.Milliseconds
-                            * moveSpeed;
-            }
-            else if (keyboardManager.IsKeyDown(moveKeys[1])) //Backward
-            {
-                Transform3D.TranslateIncrement
-                   = -Transform3D.Look * gameTime.ElapsedGameTime.Milliseconds
-                           * moveSpeed;
-            }
-
-            if (keyboardManager.IsKeyDown(moveKeys[2])) //Left
-            {
-                Transform3D.RotateIncrement = gameTime.ElapsedGameTime.Milliseconds * rotationSpeed;
-            }
-            else if (keyboardManager.IsKeyDown(moveKeys[3])) //Right
-            {
-                Transform3D.RotateIncrement = -gameTime.ElapsedGameTime.Milliseconds * rotationSpeed;
             }
         }
     }
