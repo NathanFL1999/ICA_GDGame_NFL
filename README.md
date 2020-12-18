@@ -21,7 +21,7 @@
 - [x] Check blend color in UITextObject
 - [x] Boxes and spheres were not being properly rendered - CullMode issue in RenderManager
 - [x] Exit button was hidden but we were still testing for mouse click - see MyMenuManager::HandleInput - solved by Antanas
-- [ ] Are transparent objects being drawn correctly i.e. sorted by camera distance?
+- [?] Are transparent objects being drawn correctly i.e. sorted by camera distance?
 
 ### Code to Explain
 - [x] How to integrate your existing code with the new Week 5 codebase
@@ -36,8 +36,8 @@
 - [x] ModelObject
 - [x] Input manager classes (MouseManager, KeyboardManager, GamePadManager)
 - [x] DrawOrder on DrawableGameComponents in Main
+- [x] VertexFactory
 - [ ] Effect of SamplerState on on-screen aliasing
-- [ ] VertexFactory
 
 ### Refactor for Efficiency
 - [x] ProjectionParameters::Projection property by adding isDirty flag
@@ -159,6 +159,11 @@
 - [x] Add LevelLoader
 - [x] Add BufferedVertexData class
 - [x] Create ICA_GDGame based on GCA codebase but with JibLibX and ModelObject removed
+- [x] Add ICollisionPrimitive and concrete child classes
+- [x] Add CollidablePrimitiveObject, ColliableZoneObject, CollidablePickupObject 
+- [x] Add CollidablePlayerObject
+
+### Tasks - Outstanding
 - [ ] Add support for SoundCategoryType in SoundManager
 - [ ] Add CycleCamera event listener code in CameraManager
 - [ ] Static variables/enum to represent symbolic name for resolution ResolutionType.SVGA

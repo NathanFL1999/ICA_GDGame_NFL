@@ -51,7 +51,7 @@ namespace GDLibrary.Actors
         {
             get
             {
-                return this.objectManager;
+                return objectManager;
             }
         }
 
@@ -81,15 +81,69 @@ namespace GDLibrary.Actors
         }
 
         //test for collision against all opaque and transparent objects
-        protected virtual Actor CheckCollisions(GameTime gameTime)
+        protected virtual Actor CheckAllCollisions(GameTime gameTime)
         {
+            foreach (IActor actor in objectManager.OpaqueList)
+            {
+                collidee = CheckCollision(gameTime, actor as Actor3D);
+                if (collidee != null)
+                {
+                    return collidee;
+                }
+            }
+
+            foreach (IActor actor in objectManager.TransparentList)
+            {
+                collidee = CheckCollision(gameTime, actor as Actor3D);
+                if (collidee != null)
+                {
+                    return collidee;
+                }
+            }
+
             return null;
         }
 
         //test for collision against a specific object
-        private Actor CheckCollisionWithActor(GameTime gameTime, Actor3D actor3D)
+        private Actor CheckCollision(GameTime gameTime, Actor3D actor3D)
         {
+            //dont test for collision against yourself - remember the player is in the object manager list too!
+            if (this != actor3D)
+            {
+                if (actor3D is CollidablePrimitiveObject)
+                {
+                    CollidablePrimitiveObject collidableObject = actor3D as CollidablePrimitiveObject;
+                    if (CollisionPrimitive.Intersects(collidableObject.CollisionPrimitive, this.Transform3D.TranslateIncrement))
+                    {
+                        return collidableObject;
+                    }
+                }
+                else if (actor3D is ColliableZoneObject)
+                {
+                    ColliableZoneObject zoneObject = actor3D as ColliableZoneObject;
+                    if (CollisionPrimitive.Intersects(zoneObject.CollisionPrimitive, this.Transform3D.TranslateIncrement))
+                    {
+                        return zoneObject;
+                    }
+                }
+            }
+
             return null;
+        }
+
+        //apply suggested movement since no collision will occur if the player moves to that position
+        protected virtual void ApplyInput(GameTime gameTime)
+        {
+            //was a move/rotate key pressed, if so then these values will be > 0 in dimension
+            if (Transform3D.TranslateIncrement != Vector3.Zero)
+            {
+                Transform3D.TranslateBy(Transform3D.TranslateIncrement);
+            }
+
+            if (Transform3D.RotateIncrement != 0)
+            {
+                Transform3D.RotateAroundUpBy(Transform3D.RotateIncrement);
+            }
         }
 
         //to do...
