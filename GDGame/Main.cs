@@ -191,6 +191,10 @@ namespace GDGame
             textureDictionary.Load("Assets/Textures/UI/Backgrounds/controlsmenu");
             textureDictionary.Load("Assets/Textures/UI/Backgrounds/exitmenu");
             textureDictionary.Load("Assets/Textures/UI/Backgrounds/exitmenuwithtrans");
+            textureDictionary.Load("Assets/Textures/UI/Buttons/PlayButton");
+            textureDictionary.Load("Assets/Textures/UI/Buttons/PlaycolButton");
+            textureDictionary.Load("Assets/Textures/UI/Buttons/ExitButton");
+            textureDictionary.Load("Assets/Textures/UI/Buttons/ExitcolButton");
 
             //ui
             textureDictionary.Load("Assets/Textures/UI/Controls/reticuleDefault");
@@ -299,30 +303,30 @@ namespace GDGame
             Texture2D texture = null;
             SpriteFont spriteFont = null;
 
-            #region Mouse Reticule & Text
-            texture = textureDictionary["reticuleDefault"];
+            //#region Mouse Reticule & Text
+            //texture = textureDictionary["reticuleDefault"];
 
-            transform2D = new Transform2D(
-                new Vector2(512, 384), //this value doesnt matter since we will recentre in UIMouseObject::Update()
-                0,
-                 Vector2.One,
-                new Vector2(texture.Width / 2, texture.Height / 2),
-                new Integer2(45, 46)); //read directly from the PNG file dimensions
+            //transform2D = new Transform2D(
+            //    new Vector2(512, 384), //this value doesnt matter since we will recentre in UIMouseObject::Update()
+            //    0,
+            //     Vector2.One,
+            //    new Vector2(texture.Width / 2, texture.Height / 2),
+            //    new Integer2(45, 46)); //read directly from the PNG file dimensions
 
-            UIMouseObject uiMouseObject = new UIMouseObject("reticule", ActorType.UIMouse,
-                StatusType.Update | StatusType.Drawn, transform2D, Color.White,
-                SpriteEffects.None, fontDictionary["menu"],
-                "Hello there!",
-                new Vector2(0, -40),
-                Color.Yellow,
-                0.75f * Vector2.One,
-                0,
-                texture,
-                new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height), //how much of source image do we want to draw?
-                mouseManager);
+            //UIMouseObject uiMouseObject = new UIMouseObject("reticule", ActorType.UIMouse,
+            //    StatusType.Update | StatusType.Drawn, transform2D, Color.White,
+            //    SpriteEffects.None, fontDictionary["menu"],
+            //    "Hello there!",
+            //    new Vector2(0, -40),
+            //    Color.Yellow,
+            //    0.75f * Vector2.One,
+            //    0,
+            //    texture,
+            //    new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height), //how much of source image do we want to draw?
+            //    mouseManager);
 
-            uiManager.Add(uiMouseObject);
-            #endregion Mouse Reticule & Text
+            //uiManager.Add(uiMouseObject);
+            //#endregion Mouse Reticule & Text
 
             #region Progress Control Left
             texture = textureDictionary["progress_white"];
@@ -351,28 +355,28 @@ namespace GDGame
             uiManager.Add(uiTextureObject);
             #endregion Progress Control Left
 
-            #region Text Object
-            spriteFont = Content.Load<SpriteFont>("Assets/Fonts/debug");
+            //#region Text Object
+            //spriteFont = Content.Load<SpriteFont>("Assets/Fonts/debug");
 
-            //calculate how big the text is in (w,h)
-            string text = "Hello World!!!";
-            Vector2 originalDimensions = spriteFont.MeasureString(text);
+            ////calculate how big the text is in (w,h)
+            //string text = "Hello World!!!";
+            //Vector2 originalDimensions = spriteFont.MeasureString(text);
 
-            transform2D = new Transform2D(new Vector2(512, 768 - (originalDimensions.Y * 4)),
-                0,
-                4 * Vector2.One,
-                new Vector2(originalDimensions.X / 2, originalDimensions.Y / 2), //this is text???
-                new Integer2(originalDimensions)); //accurate original dimensions
+            //transform2D = new Transform2D(new Vector2(512, 768 - (originalDimensions.Y * 4)),
+            //    0,
+            //    4 * Vector2.One,
+            //    new Vector2(originalDimensions.X / 2, originalDimensions.Y / 2), //this is text???
+            //    new Integer2(originalDimensions)); //accurate original dimensions
 
-            UITextObject uiTextObject = new UITextObject("hello", ActorType.UIText,
-                StatusType.Update | StatusType.Drawn, transform2D, new Color(0.1f, 0, 0, 1),
-                0, SpriteEffects.None, text, spriteFont);
+            //UITextObject uiTextObject = new UITextObject("hello", ActorType.UIText,
+            //    StatusType.Update | StatusType.Drawn, transform2D, new Color(0.1f, 0, 0, 1),
+            //    0, SpriteEffects.None, text, spriteFont);
 
-            uiTextObject.ControllerList.Add(new UIMouseOverController("moc1", ControllerType.MouseOver,
-                 mouseManager, Color.Red, Color.White));
+            //uiTextObject.ControllerList.Add(new UIMouseOverController("moc1", ControllerType.MouseOver,
+            //     mouseManager, Color.Red, Color.White));
 
-            uiManager.Add(uiTextObject);
-            #endregion Text Object
+            //uiManager.Add(uiTextObject);
+            //#endregion Text Object
         }
 
         private void InitMenu()
@@ -384,7 +388,7 @@ namespace GDGame
 
             #region All Menu Background Images
             //background main
-            texture = textureDictionary["exitmenuwithtrans"];
+            texture = textureDictionary["mainmenu"];
             fullScreenScaleFactor = new Vector2((float)_graphics.PreferredBackBufferWidth / texture.Width, (float)_graphics.PreferredBackBufferHeight / texture.Height);
 
             transform2D = new Transform2D(fullScreenScaleFactor);
@@ -738,6 +742,36 @@ namespace GDGame
                 transform3D, effectParameters, vertexData));
             #endregion Unlit Textured Quad
 
+            #region Lit Textured Cube
+
+            ///*********** Transform, Vertices and VertexData ***********/
+            ////lit cube
+            //transform3D = new Transform3D(Vector3.Zero, Vector3.Zero,
+            //     Vector3.One, Vector3.UnitZ, Vector3.UnitY);
+            //effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+            //    textureDictionary["checkerboard"], Color.White, 1);
+
+            //VertexPositionNormalTexture[] vertices
+            //    = VertexFactory.GetVerticesPositionNormalTexturedCube(out primitiveType,
+            //    out primitiveCount);
+
+            ////analog of the Model class in G-CA (i.e. it holdes vertices and type, count)
+            //vertexData = new VertexData<VertexPositionNormalTexture>(vertices,
+            //    primitiveType, primitiveCount);
+
+            ///*********** PrimitiveObject ***********/
+            ////now we use the "FBX" file (our vertexdata) and make a PrimitiveObject
+            //PrimitiveObject primitiveObject = new PrimitiveObject(
+            //    GameConstants.Primitive_LitTexturedPyramid,
+            //    ActorType.Decorator, //we could specify any time e.g. Pickup
+            //    StatusType.Drawn,
+            //    transform3D, effectParameters,
+            //    vertexData);
+
+
+            //archetypeDictionary.Add(primitiveObject.ID, primitiveObject);
+            #endregion Lit Textured Cube
+
             #region Unlit Origin Helper
             transform3D = new Transform3D(new Vector3(0, 20, 0),
                      Vector3.Zero, new Vector3(10, 10, 10),
@@ -834,12 +868,12 @@ namespace GDGame
             int primitiveCount;
 
             //set the position
-            transform3D = new Transform3D(new Vector3(0, 4, 40), Vector3.Zero, new Vector3(3, 6, 3),
+            transform3D = new Transform3D(new Vector3(1, 1, 1), Vector3.Zero, new Vector3(3, 6, 3),
                 -Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
-                textureDictionary["crate1"], Color.White, 1);
+                textureDictionary["checkerboard"], Color.White, 1);
 
             //get the vertex data object
             vertexData = new VertexData<VertexPositionNormalTexture>(
@@ -861,7 +895,7 @@ namespace GDGame
                     vertexData,
                     collisionPrimitive,
                     objectManager,
-                    GameConstants.KeysTwo,
+                    GameConstants.KeysOne,
                     GameConstants.playerMoveSpeed,
                     GameConstants.playerRotateSpeed,
                     keyboardManager);
@@ -905,7 +939,7 @@ namespace GDGame
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
-                textureDictionary["crate1"], Color.White, 1);
+                textureDictionary["checkerboard"], Color.White, 1);
 
             //get the vertex data object
             vertexData = new VertexData<VertexPositionNormalTexture>(
@@ -946,7 +980,7 @@ namespace GDGame
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
-                textureDictionary["crate1"], Color.White, 1);
+                textureDictionary["checkerboard"], Color.White, 1);
 
             //get the vertex data object
             vertexData = new VertexData<VertexPositionNormalTexture>(
