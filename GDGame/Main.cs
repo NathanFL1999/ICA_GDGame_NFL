@@ -174,6 +174,7 @@ namespace GDGame
             textureDictionary.Load("Assets/Textures/Skybox/front");
             textureDictionary.Load("Assets/Textures/Skybox/sky");
             textureDictionary.Load("Assets/Textures/Foliage/Ground/grass1");
+            textureDictionary.Load("Assets/Textures/Foliage/Ground/cobblestone");
 
             //demo
             textureDictionary.Load("Assets/Demo/Textures/checkerboard");
@@ -187,6 +188,7 @@ namespace GDGame
             //cubes
             textureDictionary.Load("Assets/Textures/Cubes/purpleCube");
             textureDictionary.Load("Assets/Textures/Cubes/blueCube");
+            textureDictionary.Load("Assets/Textures/Cubes/redCube");
 
             //menu
             textureDictionary.Load("Assets/Textures/UI/Controls/genericbtn");
@@ -199,6 +201,7 @@ namespace GDGame
             textureDictionary.Load("Assets/Textures/UI/Buttons/PlaycolButton");
             textureDictionary.Load("Assets/Textures/UI/Buttons/ExitButton");
             textureDictionary.Load("Assets/Textures/UI/Buttons/ExitcolButton");
+            textureDictionary.Load("Assets/Textures/UI/Backgrounds/title");
 
             //ui
             textureDictionary.Load("Assets/Textures/UI/Controls/reticuleDefault");
@@ -219,12 +222,12 @@ namespace GDGame
 
         protected override void Initialize()
         {
-            float worldScale = 2000;
+            float worldScale = 1000;
             //set game title
-            Window.Title = "My Amazing Game";
+            Window.Title = "Colour clash";
 
             //graphic settings - see https://en.wikipedia.org/wiki/Display_resolution#/media/File:Vector_Video_Standards8.svg
-            InitGraphics(1024, 768);
+            InitGraphics(1440, 1080);
 
             //note that we moved this from LoadContent to allow InitDebug to be called in Initialize
             _spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -577,7 +580,7 @@ namespace GDGame
             camera3D = new Camera3D(GameConstants.Camera_CollidableThirdPerson,
                 ActorType.Camera3D, StatusType.Update, transform3D,
                 ProjectionParameters.StandardDeepSixteenTen,
-                new Viewport(0, 0, 1024, 768));
+                new Viewport(0, 0, 1440, 1080));
 
             //attach a controller
             camera3D.ControllerList.Add(new ThirdPersonController(
@@ -878,7 +881,7 @@ namespace GDGame
             int primitiveCount;
 
             //set the position
-            transform3D = new Transform3D(new Vector3(1, 2, 1), Vector3.Zero, new Vector3(5, 5, 5),
+            transform3D = new Transform3D(new Vector3(150, 2, 200), Vector3.Zero, new Vector3(5, 5, 5),
                 -Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
@@ -943,13 +946,103 @@ namespace GDGame
             PrimitiveType primitiveType;
             int primitiveCount;
 
-            /************************* Box Collision Primitive  *************************/
+            /************************* Box Collision Primitive 1 *************************/
 
-            transform3D = new Transform3D(new Vector3(20, 4, 0), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(150, 3, 130), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
-                textureDictionary["blueCube"], Color.White, 1);
+                textureDictionary["redCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidablePrimitiveObject(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.CollidableDecorator,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+
+            /************************* Box Collision Primitive 2 *************************/
+
+            transform3D = new Transform3D(new Vector3(155, 3, 170), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["redCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidablePrimitiveObject(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.CollidableDecorator,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+
+            /************************* Box Collision Primitive 3 *************************/
+
+            transform3D = new Transform3D(new Vector3(140, 3, 150), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["redCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidablePrimitiveObject(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.CollidableDecorator,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+
+            /************************* Box Collision Primitive 4 *************************/
+
+            transform3D = new Transform3D(new Vector3(160, 3, 150), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["redCube"], Color.White, 1);
 
             //get the vertex data object
             vertexData = new VertexData<VertexPositionNormalTexture>(
@@ -986,7 +1079,7 @@ namespace GDGame
 
             /************************* Sphere Collision Primitive  *************************/
 
-            transform3D = new Transform3D(new Vector3(-20, 3, 0), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(160, 3, 60), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
@@ -1014,7 +1107,7 @@ namespace GDGame
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
 
-            transform3D = new Transform3D(new Vector3(-40, 3, 0), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(140, 3, 60), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
@@ -1050,7 +1143,7 @@ namespace GDGame
         /// </summary>
         private void InitDecorators()
         {
-            //clone the archetypal pyramid
+            //clone the archetypal cube
             PrimitiveObject drawnActor3D
                 = archetypeDictionary[GameConstants.Primitive_LitTexturedCube].Clone() as PrimitiveObject;
 
@@ -1086,7 +1179,7 @@ namespace GDGame
         {
             PrimitiveObject drawnActor3D = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
             drawnActor3D.ActorType = ActorType.Ground;
-            drawnActor3D.EffectParameters.Texture = textureDictionary["grass1"];
+            drawnActor3D.EffectParameters.Texture = textureDictionary["cobblestone"];
             drawnActor3D.Transform3D.RotationInDegrees = new Vector3(-90, 0, 0);
             drawnActor3D.Transform3D.Scale = worldScale * Vector3.One;
             objectManager.Add(drawnActor3D);
