@@ -691,7 +691,7 @@ namespace GDGame
             Transform3D transform3D = null;
             EffectParameters effectParameters = null;
             IVertexData vertexData = null;
-            PrimitiveType primitiveType;
+            PrimitiveType primitiveType; 
             int primitiveCount;
 
             /************************* Non-Collidable  *************************/
@@ -822,7 +822,7 @@ namespace GDGame
             //add grass plane
             InitGround(worldScale);
 
-            //pyramids
+            //cube
             InitDecorators();
 
             /************ Collidable ************/
@@ -847,7 +847,7 @@ namespace GDGame
                                 10,     //number of in-world x-units represented by 1 pixel in image
                                 10,     //number of in-world z-units represented by 1 pixel in image
                                 20,     //y-axis height offset
-                                new Vector3(-50, 0, -150) //offset to move all new objects by
+                                new Vector3(0, 0, 0) //offset to move all new objects by
                                 );
             objectManager.Add(actorList);
 
@@ -1005,6 +1005,34 @@ namespace GDGame
             collidablePrimitiveObject = new CollidablePrimitiveObject(
                 GameConstants.Primitive_LitTexturedCube,
                 ActorType.CollidablePickup,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+
+            transform3D = new Transform3D(new Vector3(-40, 3, 0), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["purpleCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new SphereCollisionPrimitive(transform3D, 10);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidablePrimitiveObject(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.CollidablePickup,  
                 StatusType.Drawn | StatusType.Update,
                 transform3D,
                 effectParameters,

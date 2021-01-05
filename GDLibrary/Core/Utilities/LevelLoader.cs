@@ -80,7 +80,7 @@ namespace GDLibrary.Utilities
             if (color.Equals(new Color(255, 0, 0)))
             {
                 PrimitiveObject archetype
-                        = archetypeDictionary["lit textured pyramid"] as PrimitiveObject;
+                        = archetypeDictionary["lit textured cube"] as PrimitiveObject;
 
                 PrimitiveObject drawnActor3D = archetype.Clone() as PrimitiveObject;
 
@@ -88,7 +88,7 @@ namespace GDLibrary.Utilities
                 //       = archetypeDictionary["lit textured pyramid"].Clone() as PrimitiveObject;
 
                 //change it a bit
-                drawnActor3D.ID = "Pyramid " + count++;
+                drawnActor3D.ID = "cube " + count++;
                 drawnActor3D.Transform3D.Scale = 10 * new Vector3(3, 4, 1);
                 drawnActor3D.EffectParameters.DiffuseColor = Color.Blue;
                 drawnActor3D.EffectParameters.Alpha = 0.5f;
