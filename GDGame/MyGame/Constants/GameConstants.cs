@@ -89,7 +89,7 @@ namespace GDGame
 
         #region Player
 
-        public static readonly float playerMoveSpeed = 0.1f;
+        public static readonly float playerMoveSpeed = 0.05f;
         public static readonly float playerRotateSpeed = 0.2f;
 
 

@@ -184,6 +184,10 @@ namespace GDGame
             //props
             textureDictionary.Load("Assets/Textures/Props/Crates/crate1");
 
+            //cubes
+            textureDictionary.Load("Assets/Textures/Cubes/purpleCube");
+            textureDictionary.Load("Assets/Textures/Cubes/blueCube");
+
             //menu
             textureDictionary.Load("Assets/Textures/UI/Controls/genericbtn");
             textureDictionary.Load("Assets/Textures/UI/Backgrounds/mainmenu");
@@ -439,6 +443,13 @@ namespace GDGame
                 new Vector2(1, 1),
                 Color.Blue,
                 new Vector2(0, 0));
+
+            uiObject.ControllerList.Add(new UIMouseOverController("moc1", ControllerType.MouseOver,
+             mouseManager, Color.Red, Color.White));
+
+            uiObject.ControllerList.Add(new UIScaleLerpController("slc1", ControllerType.ScaleLerpOverTime,
+              mouseManager, new TrigonometricParameters(0.02f, 1, 0)));
+
             menuManager.Add("main", uiObject);
 
             //exit
@@ -744,32 +755,31 @@ namespace GDGame
 
             #region Lit Textured Cube
 
-            ///*********** Transform, Vertices and VertexData ***********/
-            ////lit cube
-            //transform3D = new Transform3D(Vector3.Zero, Vector3.Zero,
-            //     Vector3.One, Vector3.UnitZ, Vector3.UnitY);
-            //effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
-            //    textureDictionary["checkerboard"], Color.White, 1);
+            /*********** Transform, Vertices and VertexData ***********/
+            //lit cube
+            transform3D = new Transform3D(Vector3.Zero, Vector3.Zero,
+                 Vector3.One, Vector3.UnitZ, Vector3.UnitY);
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["checkerboard"], Color.White, 1);
 
-            //VertexPositionNormalTexture[] vertices
-            //    = VertexFactory.GetVerticesPositionNormalTexturedCube(out primitiveType,
-            //    out primitiveCount);
+                vertices
+                = VertexFactory.GetVerticesPositionNormalTexturedCube(1, out primitiveType,
+                out primitiveCount);
 
-            ////analog of the Model class in G-CA (i.e. it holdes vertices and type, count)
-            //vertexData = new VertexData<VertexPositionNormalTexture>(vertices,
-            //    primitiveType, primitiveCount);
+            //analog of the Model class in G-CA (i.e. it holdes vertices and type, count)
+            vertexData = new VertexData<VertexPositionNormalTexture>(vertices,
+                primitiveType, primitiveCount);
 
-            ///*********** PrimitiveObject ***********/
-            ////now we use the "FBX" file (our vertexdata) and make a PrimitiveObject
-            //PrimitiveObject primitiveObject = new PrimitiveObject(
-            //    GameConstants.Primitive_LitTexturedPyramid,
-            //    ActorType.Decorator, //we could specify any time e.g. Pickup
-            //    StatusType.Drawn,
-            //    transform3D, effectParameters,
-            //    vertexData);
+            /*********** PrimitiveObject ***********/
+                primitiveObject = new PrimitiveObject(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.Decorator, //we could specify any time e.g. Pickup
+                StatusType.Drawn,
+                transform3D, effectParameters,
+                vertexData);
 
 
-            //archetypeDictionary.Add(primitiveObject.ID, primitiveObject);
+            archetypeDictionary.Add(primitiveObject.ID, primitiveObject);
             #endregion Lit Textured Cube
 
             #region Unlit Origin Helper
@@ -821,7 +831,7 @@ namespace GDGame
 
             InitCollidablePickups();
 
-            InitCollidableZones();
+            //InitCollidableZones();
 
             InitializeCollidablePlayer();
 
@@ -868,12 +878,12 @@ namespace GDGame
             int primitiveCount;
 
             //set the position
-            transform3D = new Transform3D(new Vector3(1, 1, 1), Vector3.Zero, new Vector3(3, 6, 3),
+            transform3D = new Transform3D(new Vector3(1, 2, 1), Vector3.Zero, new Vector3(5, 5, 5),
                 -Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
-                textureDictionary["checkerboard"], Color.White, 1);
+                textureDictionary["purpleCube"], Color.White, 1);
 
             //get the vertex data object
             vertexData = new VertexData<VertexPositionNormalTexture>(
@@ -935,11 +945,11 @@ namespace GDGame
 
             /************************* Box Collision Primitive  *************************/
 
-            transform3D = new Transform3D(new Vector3(20, 4, 0), Vector3.Zero, new Vector3(6, 8, 6), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(20, 4, 0), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
-                textureDictionary["checkerboard"], Color.White, 1);
+                textureDictionary["blueCube"], Color.White, 1);
 
             //get the vertex data object
             vertexData = new VertexData<VertexPositionNormalTexture>(
@@ -976,11 +986,11 @@ namespace GDGame
 
             /************************* Sphere Collision Primitive  *************************/
 
-            transform3D = new Transform3D(new Vector3(-20, 4, 0), Vector3.Zero, new Vector3(4, 12, 4), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(-20, 3, 0), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
-                textureDictionary["checkerboard"], Color.White, 1);
+                textureDictionary["purpleCube"], Color.White, 1);
 
             //get the vertex data object
             vertexData = new VertexData<VertexPositionNormalTexture>(
@@ -1014,10 +1024,10 @@ namespace GDGame
         {
             //clone the archetypal pyramid
             PrimitiveObject drawnActor3D
-                = archetypeDictionary[GameConstants.Primitive_LitTexturedPyramid].Clone() as PrimitiveObject;
+                = archetypeDictionary[GameConstants.Primitive_LitTexturedCube].Clone() as PrimitiveObject;
 
             //change it a bit
-            drawnActor3D.ID = "pyramid1";
+            drawnActor3D.ID = "cube1";
             drawnActor3D.Transform3D.Scale = 10 * new Vector3(1, 1, 1);
             drawnActor3D.Transform3D.RotationInDegrees = new Vector3(0, 0, 0);
             drawnActor3D.Transform3D.Translation = new Vector3(0, 10, 0);
