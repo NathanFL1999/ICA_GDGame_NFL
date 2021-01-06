@@ -29,6 +29,7 @@ namespace GDGame
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private bool isPaused;
 
         private CameraManager<Camera3D> cameraManager;
         private ObjectManager objectManager;
@@ -225,6 +226,8 @@ namespace GDGame
             float worldScale = 1000;
             //set game title
             Window.Title = "Colour clash";
+
+            isPaused = false;
 
             //graphic settings - see https://en.wikipedia.org/wiki/Display_resolution#/media/File:Vector_Video_Standards8.svg
             InitGraphics(1440, 1080);
@@ -838,6 +841,8 @@ namespace GDGame
 
             InitializeCollidablePlayer();
 
+            //InitCollidablePlatform();
+
             /************ Level-loader (can be collidable or non-collidable) ************/
 
             LevelLoader<PrimitiveObject> levelLoader = new LevelLoader<PrimitiveObject>(
@@ -881,7 +886,7 @@ namespace GDGame
             int primitiveCount;
 
             //set the position
-            transform3D = new Transform3D(new Vector3(150, 2, 200), Vector3.Zero, new Vector3(5, 5, 5),
+            transform3D = new Transform3D(new Vector3(150, 2.5f, 200), Vector3.Zero, new Vector3(5, 5, 5),
                 -Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
@@ -895,7 +900,7 @@ namespace GDGame
                                   primitiveType, primitiveCount);
 
             //make a CDCR surface - sphere or box, its up to you - you dont need to pass transform to either primitive anymore
-            collisionPrimitive = new SphereCollisionPrimitive(transform3D, 1);
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
 
             //if we make this a field then we can pass to the 3rd person camera controller
             collidablePlayerObject
@@ -972,6 +977,7 @@ namespace GDGame
                 effectParameters,
                 vertexData,
                 collisionPrimitive, objectManager);
+                
 
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
@@ -1062,6 +1068,48 @@ namespace GDGame
                 effectParameters,
                 vertexData,
                 collisionPrimitive, objectManager);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+        }
+
+        private void InitCollidablePlatform()
+        {
+            Transform3D transform3D = null;
+            EffectParameters effectParameters = null;
+            IVertexData vertexData = null;
+            ICollisionPrimitive collisionPrimitive = null;
+            CollidablePrimitiveObject collidablePrimitiveObject = null;
+            PrimitiveType primitiveType;
+            int primitiveCount;
+
+            /************************* Box Collision Primitive 1 *************************/
+
+            transform3D = new Transform3D(new Vector3(160, 3, 130), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["blueCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidablePrimitiveObject(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.CollidableDecorator,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager);
+
 
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
@@ -1269,7 +1317,17 @@ namespace GDGame
         {
             if (keyboardManager.IsFirstKeyPress(Keys.Escape))
             {
-                Exit();
+                if (isPaused) //menu -> game
+                {
+                    EventDispatcher.Publish(new EventData(EventCategoryType.Menu, EventActionType.OnPause,
+                        new object[] { gameTime }));
+                }
+                else //game -> menu
+                {
+                    EventDispatcher.Publish(new EventData(EventCategoryType.Menu, EventActionType.OnPlay,
+                    new object[] { gameTime }));
+                }
+                isPaused = !isPaused;
             }
             #region Demo
 #if DEMO
