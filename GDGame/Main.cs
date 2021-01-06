@@ -441,7 +441,8 @@ namespace GDGame
 
             //play
             transform2D = new Transform2D(screenCentre - new Vector2(0, 50), 0, Vector2.One, origin, imageDimensions);
-            uiObject = new UIButtonObject("play", ActorType.UITextureObject, StatusType.Drawn,
+            uiObject = new UIButtonObject("play", ActorType.UITextureObject,
+                     StatusType.Update | StatusType.Drawn,
                 transform2D, Color.White, 1, SpriteEffects.None, texture,
                 new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height),
                 "Play",
@@ -451,7 +452,7 @@ namespace GDGame
                 new Vector2(0, 0));
 
             uiObject.ControllerList.Add(new UIMouseOverController("moc1", ControllerType.MouseOver,
-             mouseManager, Color.Red, Color.White));
+             mouseManager, Color.Purple, Color.White));
 
             uiObject.ControllerList.Add(new UIScaleLerpController("slc1", ControllerType.ScaleLerpOverTime,
               mouseManager, new TrigonometricParameters(0.02f, 1, 0)));
@@ -471,7 +472,7 @@ namespace GDGame
              new Vector2(0, 0));
 
             uiObject.ControllerList.Add(new UIMouseOverController("moc1", ControllerType.MouseOver,
-                 mouseManager, Color.Red, Color.White));
+                 mouseManager, Color.Purple, Color.White));
 
             uiObject.ControllerList.Add(new UIScaleLerpController("slc1", ControllerType.ScaleLerpOverTime,
               mouseManager, new TrigonometricParameters(0.02f, 1, 0)));
@@ -1130,12 +1131,12 @@ namespace GDGame
             transform3D = new Transform3D(new Vector3(160, 3, 60), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
-            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_UnlitTextured],
                 textureDictionary["purpleCube"], Color.White, 1);
 
             //get the vertex data object
-            vertexData = new VertexData<VertexPositionNormalTexture>(
-                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+            vertexData = new VertexData<VertexPositionColorTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedOctahedron(1,
                                   out primitiveType, out primitiveCount),
                                   primitiveType, primitiveCount);
 
@@ -1158,12 +1159,12 @@ namespace GDGame
             transform3D = new Transform3D(new Vector3(140, 3, 60), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
-            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_UnlitTextured],
                 textureDictionary["purpleCube"], Color.White, 1);
 
             //get the vertex data object
-            vertexData = new VertexData<VertexPositionNormalTexture>(
-                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+            vertexData = new VertexData<VertexPositionColorTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedOctahedron(1,
                                   out primitiveType, out primitiveCount),
                                   primitiveType, primitiveCount);
 
