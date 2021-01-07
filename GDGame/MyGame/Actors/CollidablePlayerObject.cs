@@ -17,13 +17,15 @@ namespace GDLibrary.MyGame
         #region Fields
         private float moveSpeed, rotationSpeed;
         private KeyboardManager keyboardManager;
+        private Game game;
+        private int deathCount;
         private Keys[] moveKeys;
         #endregion Fields
 
         public CollidablePlayerObject(string id, ActorType actorType, StatusType statusType, Transform3D transform,
             EffectParameters effectParameters, IVertexData vertexData,
             ICollisionPrimitive collisionPrimitive, ObjectManager objectManager,
-            Keys[] moveKeys, float moveSpeed, float rotationSpeed, KeyboardManager keyboardManager)
+            Keys[] moveKeys, float moveSpeed, float rotationSpeed, KeyboardManager keyboardManager, Game game)
             : base(id, actorType, statusType, transform, effectParameters, vertexData, collisionPrimitive, objectManager)
         {
             this.moveKeys = moveKeys;
@@ -32,6 +34,9 @@ namespace GDLibrary.MyGame
 
             //for movement
             this.keyboardManager = keyboardManager;
+            this.game = game;
+
+            this.deathCount = 0;
         }
 
         public override void Update(GameTime gameTime)
@@ -114,7 +119,10 @@ namespace GDLibrary.MyGame
                 //the boxes on the right that move up and down
                 else if (collidee.ActorType == ActorType.CollidableDecorator)
                 {
-                    (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Blue;
+                    (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Yellow;
+                    Transform3D.Translation = new Vector3(150, 2.5f, 200);
+
+                    deathCount++;
                 }
             }
         }

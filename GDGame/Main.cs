@@ -30,6 +30,7 @@ namespace GDGame
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private bool isPaused;
+        // private int score;
 
         private CameraManager<Camera3D> cameraManager;
         private ObjectManager objectManager;
@@ -228,6 +229,7 @@ namespace GDGame
             Window.Title = "Colour clash";
 
             isPaused = false;
+            //score = 0;
 
             //graphic settings - see https://en.wikipedia.org/wiki/Display_resolution#/media/File:Vector_Video_Standards8.svg
             InitGraphics(1440, 1080);
@@ -917,7 +919,8 @@ namespace GDGame
                     GameConstants.KeysOne,
                     GameConstants.playerMoveSpeed,
                     GameConstants.playerRotateSpeed,
-                    keyboardManager);
+                    keyboardManager,
+                    this);
 
             objectManager.Add(collidablePlayerObject);
         }
@@ -1110,6 +1113,7 @@ namespace GDGame
                 effectParameters,
                 vertexData,
                 collisionPrimitive, objectManager);
+
 
 
             //add to the archetype dictionary
