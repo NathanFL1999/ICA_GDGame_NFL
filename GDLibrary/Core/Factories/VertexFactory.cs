@@ -547,13 +547,13 @@ namespace GDLibrary.Factories
 
             //BottomRight
             vertices[18] = new VertexPositionColorTexture(bottomCentre, Color.White, uvTopCentre);
-            vertices[19] = new VertexPositionColorTexture(backRight, Color.White, uvBottomRight);
-            vertices[20] = new VertexPositionColorTexture(frontRight, Color.White, uvBottomLeft);
+            vertices[19] = new VertexPositionColorTexture(frontRight, Color.White, uvBottomRight);
+            vertices[20] = new VertexPositionColorTexture(backRight, Color.White, uvBottomLeft);
 
             //BottomBack
             vertices[21] = new VertexPositionColorTexture(bottomCentre, Color.White, uvTopCentre);
             vertices[22] = new VertexPositionColorTexture(backRight, Color.White, uvBottomRight);
-            vertices[23] = new VertexPositionColorTexture(frontLeft, Color.White, uvBottomLeft);
+            vertices[23] = new VertexPositionColorTexture(backLeft, Color.White, uvBottomLeft);
 
 
             return vertices;
