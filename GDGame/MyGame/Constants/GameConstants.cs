@@ -7,7 +7,7 @@ namespace GDGame
         #region Common
 
         private static readonly float strafeSpeedMultiplier = 0.1f;
-        public static readonly Keys[] KeysOne = { Keys.W, Keys.S, Keys.A, Keys.D };
+        public static readonly Keys[] KeysOne = { Keys.W, Keys.S, Keys.A, Keys.D, Keys.E, Keys.Q };
         public static readonly Keys[] KeysTwo = { Keys.U, Keys.J, Keys.H, Keys.K };
         //   public static readonly Keys[] KeysThree = { Keys.U, Keys.J, Keys.H, Keys.K };
         #endregion Common

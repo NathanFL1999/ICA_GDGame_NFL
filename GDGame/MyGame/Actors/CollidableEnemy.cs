@@ -11,13 +11,13 @@ using System.Text;
 
 namespace GDGame.MyGame.Actors
 {
-    class CollidablePlatform : CollidablePrimitiveObject
+    class CollidableEnemy : CollidablePrimitiveObject
     {
 
         private float speed;
         private float range;
 
-        public CollidablePlatform(string id, ActorType actorType, StatusType statusType, Transform3D transform, EffectParameters effectParameters, IVertexData vertexData, ICollisionPrimitive collisionPrimitive, ObjectManager objectManager, float speed, float range)
+        public CollidableEnemy(string id, ActorType actorType, StatusType statusType, Transform3D transform, EffectParameters effectParameters, IVertexData vertexData, ICollisionPrimitive collisionPrimitive, ObjectManager objectManager, float speed, float range)
             : base(id, actorType, statusType, transform, effectParameters, vertexData, collisionPrimitive, objectManager)
         {
             this.speed = speed;

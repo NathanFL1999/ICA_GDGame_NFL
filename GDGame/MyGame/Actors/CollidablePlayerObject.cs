@@ -84,6 +84,16 @@ namespace GDLibrary.MyGame
             {
                 Transform3D.TranslateIncrement += Transform3D.Right * gameTime.ElapsedGameTime.Milliseconds * moveSpeed;
             }
+
+            if (keyboardManager.IsFirstKeyPress(moveKeys[4])) //Rotate Right
+            {
+                Transform3D.RotateAroundUpBy(-90);
+            }
+            else if (keyboardManager.IsFirstKeyPress(moveKeys[5])) //Rotate Left
+            {
+                Transform3D.RotateAroundUpBy(90);
+            }
+
         }
 
         /********************************************************************************************/
@@ -120,7 +130,7 @@ namespace GDLibrary.MyGame
                 else if (collidee.ActorType == ActorType.Enemy)
                 {
                     (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Yellow;
-                    Transform3D.Translation = new Vector3(150, 2.5f, 200);
+                    Transform3D.Translation = new Vector3(150, 2.5f, 500);
 
                     deathCount++;
                 }

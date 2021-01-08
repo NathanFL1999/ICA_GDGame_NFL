@@ -94,7 +94,7 @@ namespace GDLibrary.Utilities
 
                 //change it a bit
                 drawnActor3D.ID = "cube " + count++;
-                drawnActor3D.Transform3D.Scale = 10 * new Vector3(3, 4, 1);
+                drawnActor3D.Transform3D.Scale = 10 * new Vector3(2, 3, 2);
                 drawnActor3D.EffectParameters.Texture = textureDictionary["walls"];
                 drawnActor3D.EffectParameters.Alpha = 1;
                 drawnActor3D.Transform3D.Translation = translation;
