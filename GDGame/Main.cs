@@ -226,7 +226,7 @@ namespace GDGame
         {
             float worldScale = 1000;
             //set game title
-            Window.Title = "Colour clash";
+            Window.Title = "Zero Deaths";
 
             isPaused = false;
             //score = 0;
@@ -272,7 +272,7 @@ namespace GDGame
             #region Debug
 #if DEBUG
             //debug info
-            InitDebug();
+           // InitDebug();
 #endif
             #endregion Debug
 
@@ -354,41 +354,35 @@ namespace GDGame
                 texture,
                 new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height));
 
-            //uiTextureObject.ControllerList.Add(new UIRotationController("rc1", ControllerType.RotationOverTime));
 
-            //uiTextureObject.ControllerList.Add(new UIColorLerpController("clc1", ControllerType.ColorLerpOverTime,
-            //    Color.White, Color.Black));
-
-            //uiTextureObject.ControllerList.Add(new UIMouseController("moc1", ControllerType.MouseOver,
-            //    this.mouseManager));
 
             uiTextureObject.ControllerList.Add(new UIProgressController("pc1", ControllerType.Progress, 0, 10));
 
             uiManager.Add(uiTextureObject);
             #endregion Progress Control Left
 
-            //#region Text Object
-            //spriteFont = Content.Load<SpriteFont>("Assets/Fonts/debug");
+            //Death Count UI
+            #region Text Object
+            spriteFont = Content.Load<SpriteFont>("Assets/Fonts/menu");
 
-            ////calculate how big the text is in (w,h)
-            //string text = "Hello World!!!";
-            //Vector2 originalDimensions = spriteFont.MeasureString(text);
+            string text = "Death Count : 0";
+            Vector2 originalDimensions = spriteFont.MeasureString(text);
 
-            //transform2D = new Transform2D(new Vector2(512, 768 - (originalDimensions.Y * 4)),
-            //    0,
-            //    4 * Vector2.One,
-            //    new Vector2(originalDimensions.X / 2, originalDimensions.Y / 2), //this is text???
-            //    new Integer2(originalDimensions)); //accurate original dimensions
+            transform2D = new Transform2D(
+               new Vector2(27 + originalDimensions.X / 2, 16 + originalDimensions.Y / 2), 0,
+               Vector2.One,
+               new Vector2(originalDimensions.X / 2, originalDimensions.Y / 2),
+               new Integer2(originalDimensions));
 
-            //UITextObject uiTextObject = new UITextObject("hello", ActorType.UIText,
-            //    StatusType.Update | StatusType.Drawn, transform2D, new Color(0.1f, 0, 0, 1),
-            //    0, SpriteEffects.None, text, spriteFont);
 
-            //uiTextObject.ControllerList.Add(new UIMouseOverController("moc1", ControllerType.MouseOver,
-            //     mouseManager, Color.Red, Color.White));
+            UITextObject deathCount = new UITextObject("deathCount", ActorType.UIText,
+                StatusType.Drawn, transform2D,
+               Color.White, 0,
+               SpriteEffects.None,
+               text, spriteFont);
 
-            //uiManager.Add(uiTextObject);
-            //#endregion Text Object
+            uiManager.Add(deathCount);
+            #endregion Text Object
         }
 
         private void InitMenu()
@@ -601,64 +595,6 @@ namespace GDGame
 
             #endregion Collidable Camera - 3rd Person
 
-            #region Noncollidable Camera - First Person
-
-            transform3D = new Transform3D(new Vector3(10, 10, 20),
-                new Vector3(0, 0, -1), Vector3.UnitY);
-
-            camera3D = new Camera3D(GameConstants.Camera_NonCollidableFirstPerson,
-                ActorType.Camera3D, StatusType.Update, transform3D,
-                ProjectionParameters.StandardDeepSixteenTen,
-                new Viewport(0, 0, 1024, 768));
-
-            //attach a controller
-            camera3D.ControllerList.Add(new FirstPersonController(
-                GameConstants.Controllers_NonCollidableFirstPerson,
-                ControllerType.FirstPerson,
-                keyboardManager, mouseManager,
-                GameConstants.moveSpeed, GameConstants.strafeSpeed, GameConstants.rotateSpeed));
-            cameraManager.Add(camera3D);
-
-            #endregion Noncollidable Camera - First Person
-
-            #region Noncollidable Camera - Flight
-
-            transform3D = new Transform3D(new Vector3(10, 10, 20),
-                new Vector3(0, 0, -1), Vector3.UnitY);
-
-            camera3D = new Camera3D(GameConstants.Camera_NonCollidableFlight,
-                ActorType.Camera3D, StatusType.Update, transform3D,
-                ProjectionParameters.StandardDeepSixteenTen, new Viewport(0, 0, 1024, 768));
-
-            //attach a controller
-            camera3D.ControllerList.Add(new FlightCameraController(
-                GameConstants.Controllers_NonCollidableFlight, ControllerType.FlightCamera,
-                keyboardManager, mouseManager, null,
-                GameConstants.CameraMoveKeys,
-                10 * GameConstants.moveSpeed,
-                10 * GameConstants.strafeSpeed,
-                GameConstants.rotateSpeed));
-            cameraManager.Add(camera3D);
-
-            #endregion Noncollidable Camera - Flight
-
-            #region Noncollidable Camera - Security
-
-            transform3D = new Transform3D(new Vector3(10, 10, 50),
-                        new Vector3(0, 0, -1),
-                        Vector3.UnitY);
-
-            camera3D = new Camera3D(GameConstants.Camera_NonCollidableSecurity,
-                ActorType.Camera3D, StatusType.Update, transform3D,
-            ProjectionParameters.StandardDeepSixteenTen, viewPort);
-
-            camera3D.ControllerList.Add(new PanController(
-                GameConstants.Controllers_NonCollidableSecurity, ControllerType.Pan,
-                new Vector3(1, 1, 0), new TrigonometricParameters(30, GameConstants.mediumAngularSpeed, 0)));
-            cameraManager.Add(camera3D);
-
-            #endregion Noncollidable Camera - Security
-
             #region Noncollidable Camera - Curve3D
 
             //notice that it doesnt matter what translation, look, and up are since curve will set these
@@ -864,16 +800,6 @@ namespace GDGame
 
             //clear the list otherwise when we add level1_2 we would re-add level1_1 objects to object manager
             actorList.Clear();
-
-            //add level1_2 contents
-            actorList = levelLoader.Load(
-             textureDictionary["level1_2"],
-                             10,     //number of in-world x-units represented by 1 pixel in image
-                             10,     //number of in-world z-units represented by 1 pixel in image
-                             40,     //y-axis height offset
-                             new Vector3(-50, 0, -150) //offset to move all new objects by
-                             );
-            objectManager.Add(actorList);
         }
 
         #region NEW - 26.12.20
