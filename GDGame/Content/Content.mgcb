@@ -25,6 +25,12 @@
 /processorParam:Quality=Best
 /build:Assets/Audio/Effects/smokealarm1.ogg
 
+#begin Assets/Audio/SoundTrack/GameSong.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Assets/Audio/SoundTrack/GameSong.wav
+
 #begin Assets/Demo/Textures/checkerboard.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -165,6 +171,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Foliage/Ground/grass1.jpg
+
+#begin Assets/Textures/Foliage/Ground/grey.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/Foliage/Ground/grey.png
 
 #begin Assets/Textures/Foliage/Trees/tree1.png
 /importer:TextureImporter

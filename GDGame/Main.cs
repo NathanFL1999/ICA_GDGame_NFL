@@ -132,6 +132,9 @@ namespace GDGame
             soundManager.Add(new GDLibrary.Managers.Cue("smokealarm",
                 Content.Load<SoundEffect>("Assets/Audio/Effects/smokealarm1"), SoundCategoryType.Alarm, new Vector3(1, 0, 0), false));
 
+            soundManager.Add(new GDLibrary.Managers.Cue("GameSong",
+                Content.Load<SoundEffect>("Assets/Audio/SoundTrack/GameSong"), SoundCategoryType.BackgroundMusic, new Vector3(1, 0, 0), false));
+
             //to do..add more sounds
         }
 
@@ -179,6 +182,7 @@ namespace GDGame
             textureDictionary.Load("Assets/Textures/Skybox/sky");
             textureDictionary.Load("Assets/Textures/Foliage/Ground/grass1");
             textureDictionary.Load("Assets/Textures/Foliage/Ground/cobblestone");
+            textureDictionary.Load("Assets/Textures/Foliage/Ground/grey");
 
             //demo
             textureDictionary.Load("Assets/Demo/Textures/checkerboard");
@@ -232,7 +236,7 @@ namespace GDGame
 
             isPaused = false;
             deathCount = 0;
-
+            
             //graphic settings - see https://en.wikipedia.org/wiki/Display_resolution#/media/File:Vector_Video_Standards8.svg
             InitGraphics(1440, 1080);
 
@@ -401,7 +405,7 @@ namespace GDGame
 
             transform2D = new Transform2D(fullScreenScaleFactor);
             uiObject = new UITextureObject("main_bckgnd", ActorType.UITextureObject, StatusType.Drawn,
-                transform2D, Color.LightGreen, 1, SpriteEffects.None, texture,
+                transform2D, Color.White, 1, SpriteEffects.None, texture,
                 new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height));
             menuManager.Add("main", uiObject);
 
@@ -438,7 +442,7 @@ namespace GDGame
             Integer2 imageDimensions = new Integer2(texture.Width, texture.Height);
 
             //play
-            transform2D = new Transform2D(screenCentre - new Vector2(0, 50), 0, Vector2.One, origin, imageDimensions);
+            transform2D = new Transform2D(screenCentre - new Vector2(0, -150), 0, Vector2.One, origin, imageDimensions);
             uiObject = new UIButtonObject("play", ActorType.UITextureObject,
                      StatusType.Update | StatusType.Drawn,
                 transform2D, Color.White, 1, SpriteEffects.None, texture,
@@ -458,7 +462,7 @@ namespace GDGame
             menuManager.Add("main", uiObject);
 
             //exit
-            transform2D = new Transform2D(screenCentre + new Vector2(0, 50), 0, Vector2.One, origin, imageDimensions);
+            transform2D = new Transform2D(screenCentre + new Vector2(0, 225), 0, Vector2.One, origin, imageDimensions);
             uiObject = new UIButtonObject("exit", ActorType.UITextureObject,
                 StatusType.Update | StatusType.Drawn,
              transform2D, Color.White, 1, SpriteEffects.None, texture,
@@ -589,7 +593,7 @@ namespace GDGame
                 GameConstants.Controllers_CollidableThirdPerson,
                 ControllerType.ThirdPerson,
                 collidablePlayerObject,
-                135,
+                170,
                 40,
                 1,
                 mouseManager));
@@ -1119,7 +1123,7 @@ namespace GDGame
         {
             PrimitiveObject drawnActor3D = archetypeDictionary[GameConstants.Primitive_UnlitTexturedQuad].Clone() as PrimitiveObject;
             drawnActor3D.ActorType = ActorType.Ground;
-            drawnActor3D.EffectParameters.Texture = textureDictionary["cobblestone"];
+            drawnActor3D.EffectParameters.Texture = textureDictionary["grey"];
             drawnActor3D.Transform3D.RotationInDegrees = new Vector3(-90, 0, 0);
             drawnActor3D.Transform3D.Scale = worldScale * Vector3.One;
             objectManager.Add(drawnActor3D);
@@ -1221,6 +1225,7 @@ namespace GDGame
                 }
                 isPaused = !isPaused;
             }
+
             #region Demo
 #if DEMO
 

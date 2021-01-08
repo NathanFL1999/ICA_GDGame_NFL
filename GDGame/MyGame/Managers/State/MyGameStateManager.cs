@@ -24,7 +24,7 @@ namespace GDLibrary.Core.Managers.State
 
         public override void HandleEvent(EventData eventData)
         {
-            //add new if...else if statements to handle events here...
+            //add new if...else if statements to handle events here..
 
             //remember to pass the eventData down so the parent class can process pause/unpause
             base.HandleEvent(eventData);
