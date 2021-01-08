@@ -169,6 +169,8 @@ namespace GDGame
             textureDictionary.Load("Assets/Textures/Level/level1_2");
             //add more levels here...
 
+            textureDictionary.Load("Assets/Textures/Level/walls");
+
             //sky
             textureDictionary.Load("Assets/Textures/Skybox/back");
             textureDictionary.Load("Assets/Textures/Skybox/left");
@@ -272,7 +274,7 @@ namespace GDGame
             #region Debug
 #if DEBUG
             //debug info
-           // InitDebug();
+            InitDebug();
 #endif
             #endregion Debug
 
@@ -772,7 +774,7 @@ namespace GDGame
 
             /************ Collidable ************/
 
-            InitCollidableProps();
+            InitCollidableEnemy();
 
             InitCollidablePickups();
 
@@ -785,7 +787,7 @@ namespace GDGame
             /************ Level-loader (can be collidable or non-collidable) ************/
 
             LevelLoader<PrimitiveObject> levelLoader = new LevelLoader<PrimitiveObject>(
-                archetypeDictionary, textureDictionary);
+                archetypeDictionary, textureDictionary, objectManager);
             List<DrawnActor3D> actorList = null;
 
             //add level1_1 contents
@@ -871,7 +873,7 @@ namespace GDGame
             objectManager.Add(collidableZoneObject);
         }
 
-        private void InitCollidableProps()
+        private void InitCollidableEnemy()
         {
             Transform3D transform3D = null;
             EffectParameters effectParameters = null;
@@ -881,7 +883,7 @@ namespace GDGame
             PrimitiveType primitiveType;
             int primitiveCount;
 
-            /************************* Box Collision Primitive 1 *************************/
+            /************************* enemy 1 *************************/
 
             transform3D = new Transform3D(new Vector3(150, 3, 130), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
@@ -901,7 +903,7 @@ namespace GDGame
             //make a collidable object and pass in the primitive
             collidablePrimitiveObject = new CollidablePrimitiveObject(
                 GameConstants.Primitive_LitTexturedCube,
-                ActorType.CollidableDecorator,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                ActorType.Enemy,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
                 StatusType.Drawn | StatusType.Update,
                 transform3D,
                 effectParameters,
@@ -912,7 +914,7 @@ namespace GDGame
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
 
-            /************************* Box Collision Primitive 2 *************************/
+            /************************* Enemy 2 *************************/
 
             transform3D = new Transform3D(new Vector3(155, 3, 170), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
@@ -932,7 +934,7 @@ namespace GDGame
             //make a collidable object and pass in the primitive
             collidablePrimitiveObject = new CollidablePrimitiveObject(
                 GameConstants.Primitive_LitTexturedCube,
-                ActorType.CollidableDecorator,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                ActorType.Enemy,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
                 StatusType.Drawn | StatusType.Update,
                 transform3D,
                 effectParameters,
@@ -942,7 +944,7 @@ namespace GDGame
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
 
-            /************************* Box Collision Primitive 3 *************************/
+            /************************* Enemy 3 *************************/
 
             transform3D = new Transform3D(new Vector3(140, 3, 150), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
@@ -962,7 +964,7 @@ namespace GDGame
             //make a collidable object and pass in the primitive
             collidablePrimitiveObject = new CollidablePrimitiveObject(
                 GameConstants.Primitive_LitTexturedCube,
-                ActorType.CollidableDecorator,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                ActorType.Enemy,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
                 StatusType.Drawn | StatusType.Update,
                 transform3D,
                 effectParameters,
@@ -972,7 +974,7 @@ namespace GDGame
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
 
-            /************************* Box Collision Primitive 4 *************************/
+            /************************* Enemy 4 *************************/
 
             transform3D = new Transform3D(new Vector3(160, 3, 150), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
@@ -992,7 +994,7 @@ namespace GDGame
             //make a collidable object and pass in the primitive
             collidablePrimitiveObject = new CollidablePrimitiveObject(
                 GameConstants.Primitive_LitTexturedCube,
-                ActorType.CollidableDecorator,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                ActorType.Enemy,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
                 StatusType.Drawn | StatusType.Update,
                 transform3D,
                 effectParameters,
@@ -1115,6 +1117,7 @@ namespace GDGame
             objectManager.Add(collidablePrimitiveObject);
         }
 
+        
         #endregion NEW - 26.12.20
 
         /// <summary>

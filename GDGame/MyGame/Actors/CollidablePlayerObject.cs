@@ -117,7 +117,7 @@ namespace GDLibrary.MyGame
                     EventDispatcher.Publish(new EventData(EventCategoryType.Object, EventActionType.OnRemoveActor, parameters));
                 }
                 //the boxes on the right that move up and down
-                else if (collidee.ActorType == ActorType.CollidableDecorator)
+                else if (collidee.ActorType == ActorType.Enemy)
                 {
                     (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Yellow;
                     Transform3D.Translation = new Vector3(150, 2.5f, 200);

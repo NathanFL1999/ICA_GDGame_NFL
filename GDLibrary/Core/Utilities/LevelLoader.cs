@@ -1,6 +1,9 @@
 ﻿using GDGame;
 using GDLibrary.Actors;
 using GDLibrary.Containers;
+using GDLibrary.Enums;
+using GDLibrary.Managers;
+using GDLibrary.Parameters;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -25,12 +28,14 @@ namespace GDLibrary.Utilities
 
         private Dictionary<string, T> archetypeDictionary;
         private ContentDictionary<Texture2D> textureDictionary;
+        private ObjectManager objectManager;
 
         public LevelLoader(Dictionary<string, T> archetypeDictionary,
-            ContentDictionary<Texture2D> textureDictionary)
+            ContentDictionary<Texture2D> textureDictionary, ObjectManager objectManager)
         {
             this.archetypeDictionary = archetypeDictionary;
             this.textureDictionary = textureDictionary;
+            this.objectManager = objectManager;
         }
 
         public List<DrawnActor3D> Load(Texture2D texture,
@@ -90,11 +95,26 @@ namespace GDLibrary.Utilities
                 //change it a bit
                 drawnActor3D.ID = "cube " + count++;
                 drawnActor3D.Transform3D.Scale = 10 * new Vector3(3, 4, 1);
-                drawnActor3D.EffectParameters.DiffuseColor = Color.Blue;
-                drawnActor3D.EffectParameters.Alpha = 0.5f;
+                drawnActor3D.EffectParameters.Texture = textureDictionary["walls"];
+                drawnActor3D.EffectParameters.Alpha = 1;
                 drawnActor3D.Transform3D.Translation = translation;
                 drawnActor3D.Transform3D.RotationInDegrees = new Vector3(0, 0, 0);
-                return drawnActor3D;
+
+
+                BoxCollisionPrimitive collisionPrimitive = new BoxCollisionPrimitive(drawnActor3D.Transform3D);
+
+                //make a collidable object and pass in the primitive
+                CollidablePrimitiveObject collidablePrimitiveObject = new CollidablePrimitiveObject(
+                    drawnActor3D.ID,
+                    ActorType.CollidableDecorator,
+                    StatusType.Update | StatusType.Drawn,
+                    drawnActor3D.Transform3D,
+                    drawnActor3D.EffectParameters,
+                    drawnActor3D.IVertexData,
+                    collisionPrimitive, 
+                    objectManager);
+
+                return collidablePrimitiveObject;
             }
             else if (color.Equals(new Color(0, 0, 255)))
             {
