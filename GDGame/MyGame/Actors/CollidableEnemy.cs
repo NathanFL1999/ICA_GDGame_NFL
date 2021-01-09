@@ -3,6 +3,7 @@ using GDLibrary.Enums;
 using GDLibrary.Events;
 using GDLibrary.Interfaces;
 using GDLibrary.Managers;
+using GDLibrary.MyGame;
 using GDLibrary.Parameters;
 using Microsoft.Xna.Framework;
 using System;
@@ -16,17 +17,21 @@ namespace GDGame.MyGame.Actors
 
         private float speed;
         private float range;
+        private CollidablePlayerObject player;
 
-        public CollidableEnemy(string id, ActorType actorType, StatusType statusType, Transform3D transform, EffectParameters effectParameters, IVertexData vertexData, ICollisionPrimitive collisionPrimitive, ObjectManager objectManager, float speed, float range)
+        public CollidableEnemy(string id, ActorType actorType, StatusType statusType, Transform3D transform, EffectParameters effectParameters, IVertexData vertexData, ICollisionPrimitive collisionPrimitive, ObjectManager objectManager, float speed, float range, CollidablePlayerObject player)
             : base(id, actorType, statusType, transform, effectParameters, vertexData, collisionPrimitive, objectManager)
         {
             this.speed = speed;
             this.range = range;
+            this.player = player;
 
         }
 
         public override void Update(GameTime gameTime)
         {
+            player = (CollidablePlayerObject)this.ObjectManager.GetActorByID("collidable player1");
+
             //read any input and store suggested increments
             HandleMovement(gameTime);
 
@@ -36,6 +41,32 @@ namespace GDGame.MyGame.Actors
             //how do we respond to this collidee e.g. pickup?
             HandleCollisionResponse(Collidee);
 
+            Vector3 movement = new Vector3(0, 1, 0);
+
+            if ((this.Transform3D.Translation - player.Transform3D.Translation).Length() <= 100)
+            {
+
+                    if (this.Transform3D.Translation.X <= player.Transform3D.Translation.X)
+                    {
+                        this.Transform3D.TranslateBy(new Vector3(0.2f, 0, 0));
+                    }
+
+                    else if (this.Transform3D.Translation.X >= player.Transform3D.Translation.X)
+                    {
+                        this.Transform3D.TranslateBy(new Vector3(-0.2f, 0, 0));
+                    }
+
+                    if (this.Transform3D.Translation.Z <= player.Transform3D.Translation.Z)
+                    {
+                        this.Transform3D.TranslateBy(new Vector3(0, 0, 0.2f));
+                    }
+
+                    else if (this.Transform3D.Translation.Z >= player.Transform3D.Translation.Z)
+                    {
+                        this.Transform3D.TranslateBy(new Vector3(0, 0, -0.2f));
+                    }
+
+            }
             //if no collision then move - see how we set this.Collidee to null in HandleCollisionResponse()
             //below when we hit against a zone
             if (Collidee == null)
@@ -49,18 +80,8 @@ namespace GDGame.MyGame.Actors
 
         protected void HandleMovement(GameTime gameTime)
         {
-            //if (keyboardManager.IsKeyDown(moveKeys[0])) //Forward
-            //{
-            //    Transform3D.TranslateIncrement
-            //        = Transform3D.Look * gameTime.ElapsedGameTime.Milliseconds
-            //                * moveSpeed;
-            //}
-            //else if (keyboardManager.IsKeyDown(moveKeys[1])) //Backward
-            //{
-            //    Transform3D.TranslateIncrement
-            //       = -Transform3D.Look * gameTime.ElapsedGameTime.Milliseconds
-            //               * moveSpeed;
-            //}
+            base.Update(gameTime);
+            
 
             
         }
@@ -88,9 +109,9 @@ namespace GDGame.MyGame.Actors
                     EventDispatcher.Publish(new EventData(EventCategoryType.Object, EventActionType.OnRemoveActor, parameters));
                 }
                 //the boxes on the right that move up and down
-                else if (collidee.ActorType == ActorType.CollidableDecorator)
+                else if (collidee.ActorType == ActorType.CollidablePlayer)
                 {
-                    (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Blue;
+                    
                 }
             }
         }

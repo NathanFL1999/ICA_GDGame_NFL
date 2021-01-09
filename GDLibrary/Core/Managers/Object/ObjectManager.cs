@@ -323,6 +323,19 @@ namespace GDLibrary.Managers
             removeList.Clear();
         }
 
+        public DrawnActor3D GetActorByID(String ID)
+        {
+
+            foreach (DrawnActor3D actor in opaqueList)
+            {
+                if (actor.ID == ID)
+                {
+                    return actor;
+                }
+            }
+            return null;
+        }
+
         /// <summary>
         /// Clears all content - Use when we restart or start next level (e.g. level 2)
         /// </summary>

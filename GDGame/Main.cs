@@ -1,6 +1,7 @@
 ﻿#define DEMO
 
 using GDGame.Controllers;
+using GDGame.MyGame.Actors;
 using GDGame.MyGame.Managers;
 using GDLibrary.Actors;
 using GDLibrary.Containers;
@@ -884,7 +885,7 @@ namespace GDGame
             EffectParameters effectParameters = null;
             IVertexData vertexData = null;
             ICollisionPrimitive collisionPrimitive = null;
-            CollidablePrimitiveObject collidablePrimitiveObject = null;
+            CollidableEnemy collidablePrimitiveObject = null;
             PrimitiveType primitiveType;
             int primitiveCount;
 
@@ -906,14 +907,14 @@ namespace GDGame
             collisionPrimitive = new BoxCollisionPrimitive(transform3D);
 
             //make a collidable object and pass in the primitive
-            collidablePrimitiveObject = new CollidablePrimitiveObject(
+            collidablePrimitiveObject = new CollidableEnemy(
                 GameConstants.Primitive_LitTexturedCube,
                 ActorType.Enemy,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
                 StatusType.Drawn | StatusType.Update,
                 transform3D,
                 effectParameters,
                 vertexData,
-                collisionPrimitive, objectManager);
+                collisionPrimitive, objectManager, 1, 1, collidablePlayerObject);
                 
 
             //add to the archetype dictionary
@@ -937,14 +938,14 @@ namespace GDGame
             collisionPrimitive = new BoxCollisionPrimitive(transform3D);
 
             //make a collidable object and pass in the primitive
-            collidablePrimitiveObject = new CollidablePrimitiveObject(
+            collidablePrimitiveObject = new CollidableEnemy(
                 GameConstants.Primitive_LitTexturedCube,
                 ActorType.Enemy,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
                 StatusType.Drawn | StatusType.Update,
                 transform3D,
                 effectParameters,
                 vertexData,
-                collisionPrimitive, objectManager);
+                collisionPrimitive, objectManager, 1, 1, collidablePlayerObject);
 
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
@@ -967,14 +968,14 @@ namespace GDGame
             collisionPrimitive = new BoxCollisionPrimitive(transform3D);
 
             //make a collidable object and pass in the primitive
-            collidablePrimitiveObject = new CollidablePrimitiveObject(
+            collidablePrimitiveObject = new CollidableEnemy(
                 GameConstants.Primitive_LitTexturedCube,
                 ActorType.Enemy,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
                 StatusType.Drawn | StatusType.Update,
                 transform3D,
                 effectParameters,
                 vertexData,
-                collisionPrimitive, objectManager);
+                collisionPrimitive, objectManager, 1, 1, collidablePlayerObject);
 
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
@@ -997,14 +998,14 @@ namespace GDGame
             collisionPrimitive = new BoxCollisionPrimitive(transform3D);
 
             //make a collidable object and pass in the primitive
-            collidablePrimitiveObject = new CollidablePrimitiveObject(
+            collidablePrimitiveObject = new CollidableEnemy(
                 GameConstants.Primitive_LitTexturedCube,
                 ActorType.Enemy,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
                 StatusType.Drawn | StatusType.Update,
                 transform3D,
                 effectParameters,
                 vertexData,
-                collisionPrimitive, objectManager);
+                collisionPrimitive, objectManager, 1, 1, collidablePlayerObject);
 
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
@@ -1087,7 +1088,7 @@ namespace GDGame
         /// </summary>
         private void InitDecorators()
         {
-            //clone the archetypal cube
+            //clone the archetypal Pyramid
             PrimitiveObject drawnActor3D
                 = archetypeDictionary[GameConstants.Primitive_LitTexturedCube].Clone() as PrimitiveObject;
 
@@ -1095,7 +1096,7 @@ namespace GDGame
             drawnActor3D.ID = "cube1";
             drawnActor3D.Transform3D.Scale = 10 * new Vector3(1, 1, 1);
             drawnActor3D.Transform3D.RotationInDegrees = new Vector3(0, 0, 0);
-            drawnActor3D.Transform3D.Translation = new Vector3(0, 10, 0);
+            drawnActor3D.Transform3D.Translation = new Vector3(150, 10, 500);
             drawnActor3D.EffectParameters.Alpha = 0.5f;
 
             //lets add a rotation controller so we can see all sides easily
@@ -1103,11 +1104,6 @@ namespace GDGame
                 new RotationController("rot controller1", ControllerType.RotationOverTime,
                 1, new Vector3(0, 1, 0)));
 
-            //drawnActor3D.ControllerList.Add(
-            //   new RotationController("rot controller2", ControllerType.RotationOverTime,
-            //   2, new Vector3(1, 0, 0)));
-
-            //finally add it into the objectmanager after SIX(!) steps
             objectManager.Add(drawnActor3D);
         }
 
@@ -1230,14 +1226,14 @@ namespace GDGame
 #if DEMO
 
             #region Object Manager
-            if (keyboardManager.IsFirstKeyPress(Keys.R))
+            if (!isPaused)
             {
                 EventDispatcher.Publish(new EventData(
                 EventCategoryType.Object,
                 EventActionType.OnApplyActionToFirstMatchActor,
                 (actor) => actor.StatusType = StatusType.Drawn | StatusType.Update, //Action
                 (actor) => actor.ActorType == ActorType.Decorator
-                && actor.ID.Equals("pyramid1"), //Predicate
+                && actor.ID.Equals("cube1"), //Predicate
                 null //parameters
                 ));
             }
@@ -1293,6 +1289,13 @@ namespace GDGame
                 object[] parameters = { "smokealarm", listener, emitter };
                 EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
                     EventActionType.OnPlay3D, parameters));
+            }
+
+            if (!isPaused)
+            {
+                object[] parameters = { "GameSong" };
+                EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
+                    EventActionType.OnPlay2D, parameters));
             }
             #endregion Sound Demos
 
