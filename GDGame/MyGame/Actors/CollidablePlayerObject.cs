@@ -134,6 +134,13 @@ namespace GDLibrary.MyGame
 
                     deathCount++;
                 }
+                if (collidee.ActorType == ActorType.Obstacle)
+                {
+                    (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Purple;
+                    Transform3D.Translation = new Vector3(150, 2.5f, 500);
+
+                    deathCount++;
+                }
             }
         }
     }

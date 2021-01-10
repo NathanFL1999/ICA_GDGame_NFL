@@ -781,13 +781,13 @@ namespace GDGame
 
             InitCollidableEnemy();
 
+            InitCollidableObstacle();
+
             InitCollidablePickups();
 
             //InitCollidableZones();
 
             InitializeCollidablePlayer();
-
-            //InitCollidablePlatform();
 
             /************ Level-loader (can be collidable or non-collidable) ************/
 
@@ -922,7 +922,7 @@ namespace GDGame
 
             /************************* Enemy 2 *************************/
 
-            transform3D = new Transform3D(new Vector3(310, 3, 300), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(310, 3, 200), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
@@ -952,7 +952,7 @@ namespace GDGame
 
             /************************* Enemy 3 *************************/
 
-            transform3D = new Transform3D(new Vector3(290, 3, 300), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(290, 3, 200), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
@@ -982,7 +982,7 @@ namespace GDGame
 
             /************************* Enemy 4 *************************/
 
-            transform3D = new Transform3D(new Vector3(300, 3, 275), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(300, 3, 200), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
@@ -1080,13 +1080,54 @@ namespace GDGame
             objectManager.Add(collidablePrimitiveObject);
         }
 
-        
-        #endregion NEW - 26.12.20
+        private void InitCollidableObstacle()
+        {
+            Transform3D transform3D = null;
+            EffectParameters effectParameters = null;
+            IVertexData vertexData = null;
+            ICollisionPrimitive collisionPrimitive = null;
+            CollidableObstacle collidablePrimitiveObject = null;
+            PrimitiveType primitiveType;
+            int primitiveCount;
 
-        /// <summary>
-        /// Demos how we can clone an archetype and manually add to the object manager.
-        /// </summary>
-        private void InitDecorators()
+            /************************* Obstacle 1 *************************/
+
+            transform3D = new Transform3D(new Vector3(162, 3, 440), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["blueCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidableObstacle(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.Obstacle,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager, 1, 1);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+        }
+
+
+            #endregion NEW - 26.12.20
+
+            /// <summary>
+            /// Demos how we can clone an archetype and manually add to the object manager.
+            /// </summary>
+            private void InitDecorators()
         {
             //clone the archetypal Pyramid
             PrimitiveObject drawnActor3D
@@ -1291,12 +1332,12 @@ namespace GDGame
                     EventActionType.OnPlay3D, parameters));
             }
 
-            if (!isPaused)
-            {
-                object[] parameters = { "GameSong" };
-                EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
-                    EventActionType.OnPlay2D, parameters));
-            }
+            //if (!isPaused)
+            //{
+            //    object[] parameters = { "GameSong" };
+            //    EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
+            //        EventActionType.OnPlay2D, parameters));
+            //}
             #endregion Sound Demos
 
             #region Menu & UI Demos

@@ -27,7 +27,8 @@
         Sky,
         Ground,
 
-        Enemy,    //enemy
+        Enemy,//enemy
+        Obstacle,
         PC,    //hero
         Decorator, //architecture, obstacle
 
