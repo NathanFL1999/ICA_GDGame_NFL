@@ -129,6 +129,10 @@ namespace GDLibrary.MyGame
                 //the boxes on the right that move up and down
                 else if (collidee.ActorType == ActorType.Enemy)
                 {
+                    object[] parameters = { "lose" };
+                    EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
+                      EventActionType.OnPlay2D, parameters));
+
                     (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Yellow;
                     Transform3D.Translation = new Vector3(150, 2.5f, 500);
 
@@ -136,8 +140,13 @@ namespace GDLibrary.MyGame
                 }
                 if (collidee.ActorType == ActorType.Obstacle)
                 {
+
+                    object[] parameters = { "lose" };
+                    EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
+                      EventActionType.OnPlay2D, parameters));
+
                     (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Purple;
-                    Transform3D.Translation = new Vector3(150, 2.5f, 500);
+                    Transform3D.Translation = new Vector3(170, 2.5f, 500);
 
                     deathCount++;
                 }

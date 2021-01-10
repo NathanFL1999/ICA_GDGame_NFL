@@ -67,7 +67,12 @@ namespace GDGame.MyGame.Managers
             switch (uIButtonObject.ID)
             {
                 case "play":
+                    object[] parameters = { "buttonClick" };
+                    EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
+                        EventActionType.OnPlay2D, parameters));
+
                     EventDispatcher.Publish(new EventData(EventCategoryType.Menu, EventActionType.OnPlay, null));
+
                     break;
 
                 case "controls":

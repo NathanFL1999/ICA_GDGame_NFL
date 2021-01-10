@@ -130,11 +130,17 @@ namespace GDGame
 
         private void LoadSounds()
         {
-            soundManager.Add(new GDLibrary.Managers.Cue("smokealarm",
-                Content.Load<SoundEffect>("Assets/Audio/Effects/smokealarm1"), SoundCategoryType.Alarm, new Vector3(1, 0, 0), false));
+            soundManager.Add(new GDLibrary.Managers.Cue("lose",
+                Content.Load<SoundEffect>("Assets/Audio/Effects/lose"), SoundCategoryType.WinLose, new Vector3(0.5f, 0, 0), false));
+
+            soundManager.Add(new GDLibrary.Managers.Cue("win",
+                Content.Load<SoundEffect>("Assets/Audio/Effects/win"), SoundCategoryType.WinLose, new Vector3(0.5f, 0, 0), false));
+
+            soundManager.Add(new GDLibrary.Managers.Cue("buttonClick",
+                Content.Load<SoundEffect>("Assets/Audio/Effects/buttonClick"), SoundCategoryType.WinLose, new Vector3(0.5f, 0, 0), false));
 
             soundManager.Add(new GDLibrary.Managers.Cue("GameSong",
-                Content.Load<SoundEffect>("Assets/Audio/SoundTrack/GameSong"), SoundCategoryType.BackgroundMusic, new Vector3(1, 0, 0), false));
+                Content.Load<SoundEffect>("Assets/Audio/SoundTrack/GameSong"), SoundCategoryType.BackgroundMusic, new Vector3(0.5f, 0, 0), true));
 
             //to do..add more sounds
         }
@@ -282,6 +288,13 @@ namespace GDGame
             //InitDebug();
 #endif
             #endregion Debug
+
+
+          
+            object[] parameters = { "GameSong" };
+            EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
+              EventActionType.OnPlay2D, parameters));
+            
 
             base.Initialize();
         }
@@ -495,15 +508,17 @@ namespace GDGame
         private void InitCurves()
         {
             //create the camera curve to be applied to the track controller
-            Transform3DCurve curveA = new Transform3DCurve(CurveLoopType.Oscillate); //experiment with other CurveLoopTypes
-            curveA.Add(new Vector3(0, 5, 100), -Vector3.UnitZ, Vector3.UnitY, 0); //start
-            curveA.Add(new Vector3(0, 5, 80), new Vector3(1, 0, -1), Vector3.UnitY, 1000); //start position
-            curveA.Add(new Vector3(0, 5, 50), -Vector3.UnitZ, Vector3.UnitY, 3000); //start position
-            curveA.Add(new Vector3(0, 5, 20), new Vector3(-1, 0, -1), Vector3.UnitY, 4000); //start position
-            curveA.Add(new Vector3(0, 5, 10), -Vector3.UnitZ, Vector3.UnitY, 6000); //start position
+            Transform3DCurve curveA = new Transform3DCurve(CurveLoopType.Constant); //experiment with other CurveLoopTypes
+            curveA.Add(new Vector3(100, 120, 800), new Vector3(5, -3, -2), Vector3.UnitY, 0); //start
+            curveA.Add(new Vector3(150, 120, 400), new Vector3(5, -5, 0), Vector3.UnitY, 4000); //start position
+            curveA.Add(new Vector3(200, 120, 300), new Vector3(5, -3, -2), Vector3.UnitY, 6000); //start position
+            curveA.Add(new Vector3(200, 120, 200), new Vector3(5, -3, -2), Vector3.UnitY, 8000); //start position
+            curveA.Add(new Vector3(200, 120, 100), new Vector3(5, -3, -2), Vector3.UnitY, 10000); //start position
+            curveA.Add(new Vector3(350, 120, 100), new Vector3(5, -5, 0), Vector3.UnitY, 12000); //start position
+            curveA.Add(new Vector3(350, 30, 80), new Vector3(5, -5, 0), Vector3.UnitY, 14000); //start position
 
             //add to the dictionary
-            transform3DCurveDictionary.Add("headshake1", curveA);
+            transform3DCurveDictionary.Add("intro", curveA);
         }
 
         private void InitRails()
@@ -580,6 +595,24 @@ namespace GDGame
             Camera3D camera3D = null;
             Viewport viewPort = new Viewport(0, 0, 1440, 1080);
 
+            #region Noncollidable Camera - Curve3D
+
+            //notice that it doesnt matter what translation, look, and up are since curve will set these
+            transform3D = new Transform3D(Vector3.Zero, Vector3.Zero, Vector3.Zero);
+
+            camera3D = new Camera3D(GameConstants.Camera_NonCollidableCurveMainArena,
+              ActorType.Camera3D, StatusType.Update, transform3D,
+                        ProjectionParameters.StandardDeepSixteenTen, viewPort);
+
+            camera3D.ControllerList.Add(
+                new Curve3DController(GameConstants.Controllers_NonCollidableCurveMainArena,
+                ControllerType.Curve,
+                        transform3DCurveDictionary["intro"])); //use the curve dictionary to retrieve a transform3DCurve by id
+
+            cameraManager.Add(camera3D);
+
+            #endregion Noncollidable Camera - Curve3D
+
             #region Collidable Camera - 3rd Person
 
             transform3D = new Transform3D(Vector3.Zero, -Vector3.UnitZ, Vector3.UnitY);
@@ -595,30 +628,12 @@ namespace GDGame
                 ControllerType.ThirdPerson,
                 collidablePlayerObject,
                 170,
-                40,
+                30,
                 1,
                 mouseManager));
             cameraManager.Add(camera3D);
 
             #endregion Collidable Camera - 3rd Person
-
-            #region Noncollidable Camera - Curve3D
-
-            //notice that it doesnt matter what translation, look, and up are since curve will set these
-            transform3D = new Transform3D(Vector3.Zero, Vector3.Zero, Vector3.Zero);
-
-            camera3D = new Camera3D(GameConstants.Camera_NonCollidableCurveMainArena,
-              ActorType.Camera3D, StatusType.Update, transform3D,
-                        ProjectionParameters.StandardDeepSixteenTen, viewPort);
-
-            camera3D.ControllerList.Add(
-                new Curve3DController(GameConstants.Controllers_NonCollidableCurveMainArena,
-                ControllerType.Curve,
-                        transform3DCurveDictionary["headshake1"])); //use the curve dictionary to retrieve a transform3DCurve by id
-
-            cameraManager.Add(camera3D);
-
-            #endregion Noncollidable Camera - Curve3D
 
             cameraManager.ActiveCameraIndex = 0; //0, 1, 2, 3
         }
@@ -775,7 +790,7 @@ namespace GDGame
             InitGround(worldScale);
 
             //cube
-            InitDecorators();
+            //InitDecorators();
 
             /************ Collidable ************/
 
@@ -823,7 +838,7 @@ namespace GDGame
             int primitiveCount;
 
             //set the position
-            transform3D = new Transform3D(new Vector3(150, 2.5f, 500), Vector3.Zero, new Vector3(5, 5, 5),
+            transform3D = new Transform3D(new Vector3(170, 2.5f, 500), Vector3.Zero, new Vector3(5, 5, 5),
                 -Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
@@ -891,7 +906,7 @@ namespace GDGame
 
             /************************* enemy 1 *************************/
 
-            transform3D = new Transform3D(new Vector3(165, 3, 400), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(320, 3, 320), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
@@ -922,7 +937,7 @@ namespace GDGame
 
             /************************* Enemy 2 *************************/
 
-            transform3D = new Transform3D(new Vector3(310, 3, 200), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(400, 3, 480), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
@@ -952,7 +967,7 @@ namespace GDGame
 
             /************************* Enemy 3 *************************/
 
-            transform3D = new Transform3D(new Vector3(290, 3, 200), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(330, 3, 120), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
@@ -982,7 +997,7 @@ namespace GDGame
 
             /************************* Enemy 4 *************************/
 
-            transform3D = new Transform3D(new Vector3(300, 3, 200), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(330, 3, 40), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
@@ -1023,7 +1038,7 @@ namespace GDGame
 
             /************************* Sphere Collision Primitive  *************************/
 
-            transform3D = new Transform3D(new Vector3(300, 3, 200), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(350, 4, 80), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_UnlitTextured],
@@ -1050,34 +1065,6 @@ namespace GDGame
 
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
-
-            transform3D = new Transform3D(new Vector3(300, 3, 250), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
-
-            //a unique effectparameters instance for each box in case we want different color, texture, alpha
-            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_UnlitTextured],
-                textureDictionary["purpleCube"], Color.White, 1);
-
-            //get the vertex data object
-            vertexData = new VertexData<VertexPositionColorTexture>(
-                VertexFactory.GetVerticesPositionNormalTexturedOctahedron(1,
-                                  out primitiveType, out primitiveCount),
-                                  primitiveType, primitiveCount);
-
-            //make the collision primitive - changed slightly to no longer need transform
-            collisionPrimitive = new SphereCollisionPrimitive(transform3D, 10);
-
-            //make a collidable object and pass in the primitive
-            collidablePrimitiveObject = new CollidablePrimitiveObject(
-                GameConstants.Primitive_LitTexturedCube,
-                ActorType.CollidablePickup,  
-                StatusType.Drawn | StatusType.Update,
-                transform3D,
-                effectParameters,
-                vertexData,
-                collisionPrimitive, objectManager);
-
-            //add to the archetype dictionary
-            objectManager.Add(collidablePrimitiveObject);
         }
 
         private void InitCollidableObstacle()
@@ -1092,7 +1079,7 @@ namespace GDGame
 
             /************************* Obstacle 1 *************************/
 
-            transform3D = new Transform3D(new Vector3(162, 3, 440), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(170, 3, 440), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
@@ -1115,7 +1102,67 @@ namespace GDGame
                 transform3D,
                 effectParameters,
                 vertexData,
-                collisionPrimitive, objectManager, 1, 1);
+                collisionPrimitive, objectManager, 1, 1, 10);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+
+            /************************* Obstacle 2 *************************/
+
+            transform3D = new Transform3D(new Vector3(170, 3, 420), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["blueCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidableObstacle(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.Obstacle,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager, 1, 1, 10);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+
+            /************************* Obstacle 3 *************************/
+
+            transform3D = new Transform3D(new Vector3(170, 3, 400), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["blueCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidableObstacle(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.Obstacle,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager, 1, 1, 10);
 
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
@@ -1127,7 +1174,7 @@ namespace GDGame
             /// <summary>
             /// Demos how we can clone an archetype and manually add to the object manager.
             /// </summary>
-            private void InitDecorators()
+        private void InitDecorators()
         {
             //clone the archetypal Pyramid
             PrimitiveObject drawnActor3D
@@ -1281,32 +1328,8 @@ namespace GDGame
             #endregion Object Manager
 
             #region Sound Demos
-            if (keyboardManager.IsFirstKeyPress(Keys.F1))
-            {
-                // soundManager.Play2D("smokealarm");
-
-                object[] parameters = { "smokealarm" };
-                EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
-                    EventActionType.OnPlay2D, parameters));
-            }
-            else if (keyboardManager.IsFirstKeyPress(Keys.F2))
-            {
-                soundManager.Pause("smokealarm");
-
-                object[] parameters = { "smokealarm" };
-                EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
-                    EventActionType.OnPause, parameters));
-            }
-            else if (keyboardManager.IsFirstKeyPress(Keys.F3))
-            {
-                soundManager.Stop("smokealarm");
-
-                //or stop with an event
-                //object[] parameters = { "smokealarm" };
-                //EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
-                //    EventActionType.OnStop, parameters));
-            }
-            else if (keyboardManager.IsFirstKeyPress(Keys.F4))
+          
+            if (keyboardManager.IsFirstKeyPress(Keys.F4))
             {
                 soundManager.SetMasterVolume(0);
             }
@@ -1326,18 +1349,7 @@ namespace GDGame
                 emitter.Position = new Vector3(0, 5, 0);
                 emitter.Forward = Vector3.UnitZ;
                 emitter.Up = Vector3.UnitY;
-
-                object[] parameters = { "smokealarm", listener, emitter };
-                EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
-                    EventActionType.OnPlay3D, parameters));
             }
-
-            //if (!isPaused)
-            //{
-            //    object[] parameters = { "GameSong" };
-            //    EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
-            //        EventActionType.OnPlay2D, parameters));
-            //}
             #endregion Sound Demos
 
             #region Menu & UI Demos

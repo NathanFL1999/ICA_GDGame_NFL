@@ -13,17 +13,23 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Assets/Audio/Effects/explode1.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Assets/Audio/Effects/explode1.mp3
-
-#begin Assets/Audio/Effects/smokealarm1.ogg
-/importer:OggImporter
+#begin Assets/Audio/Effects/buttonClick.wav
+/importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Assets/Audio/Effects/smokealarm1.ogg
+/build:Assets/Audio/Effects/buttonClick.wav
+
+#begin Assets/Audio/Effects/lose.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Assets/Audio/Effects/lose.wav
+
+#begin Assets/Audio/Effects/win.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Assets/Audio/Effects/win.wav
 
 #begin Assets/Audio/SoundTrack/GameSong.wav
 /importer:WavImporter
