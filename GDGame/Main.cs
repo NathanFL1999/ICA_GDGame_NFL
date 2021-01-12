@@ -2,6 +2,7 @@
 
 using GDGame.Controllers;
 using GDGame.MyGame.Actors;
+using GDGame.MyGame.Controllers;
 using GDGame.MyGame.Managers;
 using GDLibrary.Actors;
 using GDLibrary.Containers;
@@ -31,7 +32,7 @@ namespace GDGame
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private bool isPaused;
-        private int deathCount;
+        private int level;
 
         private CameraManager<Camera3D> cameraManager;
         private ObjectManager objectManager;
@@ -242,7 +243,7 @@ namespace GDGame
             Window.Title = "Zero Deaths";
 
             isPaused = false;
-            deathCount = 0;
+            level = 2;
             
             //graphic settings - see https://en.wikipedia.org/wiki/Display_resolution#/media/File:Vector_Video_Standards8.svg
             InitGraphics(1440, 1080);
@@ -401,7 +402,11 @@ namespace GDGame
                SpriteEffects.None,
                text, spriteFont);
 
+            DeathCountController controller = new DeathCountController("deathCountController", ControllerType.Progress, deathCount);
+            deathCount.ControllerList.Add(controller);
+
             uiManager.Add(deathCount);
+
             #endregion Text Object
         }
 
@@ -778,59 +783,113 @@ namespace GDGame
         private void InitLevel(float worldScale)//, List<string> levelNames)
         {
             //remove any old content (e.g. on restart or next level)
+            
+            if (level == 1)
+            {
+                objectManager.Clear();
 
-            objectManager.Clear();
+                /************ Non-collidable ************/
+                //adds origin helper etc
+                InitHelpers();
 
-            /************ Non-collidable ************/
-            //adds origin helper etc
-            InitHelpers();
+                //add skybox
+                InitSkybox(worldScale);
 
-            //add skybox
-            InitSkybox(worldScale);
+                //add grass plane
+                InitGround(worldScale);
 
-            //add grass plane
-            InitGround(worldScale);
+                //cube
+                //InitDecorators();
 
-            //cube
-            //InitDecorators();
+                /************ Collidable ************/
 
-            /************ Collidable ************/
+                InitCollidableEnemy1();
 
-            InitCollidableEnemy();
+                InitCollidableObstacle1();
 
-            InitCollidableObstacle();
+                InitCollidablePickups1();
 
-            InitCollidablePickups();
+                //InitCollidableZones1();
 
-            //InitCollidableZones();
+                InitializeCollidablePlayer1();
 
-            InitializeCollidablePlayer();
+                /************ Level-loader (can be collidable or non-collidable) ************/
 
-            /************ Level-loader (can be collidable or non-collidable) ************/
+                LevelLoader<PrimitiveObject> levelLoader = new LevelLoader<PrimitiveObject>(
+                    archetypeDictionary, textureDictionary, objectManager);
+                List<DrawnActor3D> actorList = null;
 
-            LevelLoader<PrimitiveObject> levelLoader = new LevelLoader<PrimitiveObject>(
-                archetypeDictionary, textureDictionary, objectManager);
-            List<DrawnActor3D> actorList = null;
+                //add level1_1 contents
+                actorList = levelLoader.Load(
+                    textureDictionary["level1_1"],
+                                    10,     //number of in-world x-units represented by 1 pixel in image
+                                    10,     //number of in-world z-units represented by 1 pixel in image
+                                    15,     //y-axis height offset
+                                    new Vector3(0, 0, 0) //offset to move all new objects by
+                                    );
+                objectManager.Add(actorList);
 
-            //add level1_1 contents
-            actorList = levelLoader.Load(
-                textureDictionary["level1_1"],
-                                10,     //number of in-world x-units represented by 1 pixel in image
-                                10,     //number of in-world z-units represented by 1 pixel in image
-                                15,     //y-axis height offset
-                                new Vector3(0, 0, 0) //offset to move all new objects by
-                                );
-            objectManager.Add(actorList);
+                //clear the list otherwise when we add level1_2 we would re-add level1_1 objects to object manager
+                actorList.Clear();
+            }
 
-            //clear the list otherwise when we add level1_2 we would re-add level1_1 objects to object manager
-            actorList.Clear();
+
+            if (level == 2)
+            {
+                objectManager.Clear();
+
+                /************ Non-collidable ************/
+                //adds origin helper etc
+                InitHelpers();
+
+                //add skybox
+                InitSkybox(worldScale);
+
+                //add grass plane
+                InitGround(worldScale);
+
+                //cube
+                //InitDecorators();
+
+                /************ Collidable ************/
+
+                InitCollidableEnemy2();
+
+                InitCollidableObstacle2();
+
+                InitCollidablePickups2();
+
+                //InitCollidableZones2();
+
+                InitializeCollidablePlayer2();
+
+                /************ Level-loader (can be collidable or non-collidable) ************/
+
+                LevelLoader<PrimitiveObject> levelLoader = new LevelLoader<PrimitiveObject>(
+                    archetypeDictionary, textureDictionary, objectManager);
+                List<DrawnActor3D> actorList = null;
+
+                //add level1_1 contents
+                actorList = levelLoader.Load(
+                    textureDictionary["level1_2"],
+                                    10,     //number of in-world x-units represented by 1 pixel in image
+                                    10,     //number of in-world z-units represented by 1 pixel in image
+                                    15,     //y-axis height offset
+                                    new Vector3(0, 0, 0) //offset to move all new objects by
+                                    );
+                objectManager.Add(actorList);
+
+                //clear the list otherwise when we add level1_2 we would re-add level1_1 objects to object manager
+                actorList.Clear();
+            }
+
 
         }
 
         #region NEW - 26.12.20
 
-        //adds a drivable player that can collide against collidable objects and zones
-        private void InitializeCollidablePlayer()
+        #region Level 1
+        private void InitializeCollidablePlayer1()
         {
             Transform3D transform3D = null;
             EffectParameters effectParameters = null;
@@ -876,7 +935,7 @@ namespace GDGame
             objectManager.Add(collidablePlayerObject);
         }
 
-        private void InitCollidableZones()
+        private void InitCollidableZones1()
         {
             Transform3D transform3D = null;
             ICollisionPrimitive collisionPrimitive = null;
@@ -896,7 +955,7 @@ namespace GDGame
             objectManager.Add(collidableZoneObject);
         }
 
-        private void InitCollidableEnemy()
+        private void InitCollidableEnemy1()
         {
             Transform3D transform3D = null;
             EffectParameters effectParameters = null;
@@ -1058,7 +1117,7 @@ namespace GDGame
             objectManager.Add(collidablePrimitiveObject);
         }
 
-        private void InitCollidablePickups()
+        private void InitCollidablePickups1()
         {
             Transform3D transform3D = null;
             EffectParameters effectParameters = null;
@@ -1099,7 +1158,7 @@ namespace GDGame
             objectManager.Add(collidablePrimitiveObject);
         }
 
-        private void InitCollidableObstacle()
+        private void InitCollidableObstacle1()
         {
             Transform3D transform3D = null;
             EffectParameters effectParameters = null;
@@ -1200,12 +1259,298 @@ namespace GDGame
             objectManager.Add(collidablePrimitiveObject);
         }
 
+        #endregion
 
-            #endregion NEW - 26.12.20
+        #region Level 2
+        private void InitializeCollidablePlayer2()
+        {
+            Transform3D transform3D = null;
+            EffectParameters effectParameters = null;
+            IVertexData vertexData = null;
+            ICollisionPrimitive collisionPrimitive = null;
+            PrimitiveType primitiveType;
+            int primitiveCount;
 
-            /// <summary>
-            /// Demos how we can clone an archetype and manually add to the object manager.
-            /// </summary>
+            //set the position
+            transform3D = new Transform3D(new Vector3(170, 2.5f, 500), Vector3.Zero, new Vector3(5, 5, 5),
+                -Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["purpleCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make a CDCR surface - sphere or box, its up to you - you dont need to pass transform to either primitive anymore
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //if we make this a field then we can pass to the 3rd person camera controller
+            collidablePlayerObject
+                = new CollidablePlayerObject("collidable player1",
+                    //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                    ActorType.CollidablePlayer,
+                    StatusType.Drawn | StatusType.Update,
+                    transform3D,
+                    effectParameters,
+                    vertexData,
+                    collisionPrimitive,
+                    objectManager,
+                    GameConstants.KeysOne,
+                    GameConstants.playerMoveSpeed,
+                    GameConstants.playerRotateSpeed,
+                    keyboardManager,
+                    this);
+
+            objectManager.Add(collidablePlayerObject);
+        }
+
+        private void InitCollidableZones2()
+        {
+            Transform3D transform3D = null;
+            ICollisionPrimitive collisionPrimitive = null;
+            CollidableZoneObject collidableZoneObject = null;
+
+            transform3D = new Transform3D(new Vector3(0, 4, -30),
+                Vector3.Zero, new Vector3(20, 8, 4), Vector3.UnitZ, Vector3.UnitY);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            collidableZoneObject = new CollidableZoneObject("sound and camera trigger zone 1", ActorType.CollidableZone,
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                collisionPrimitive);
+
+            objectManager.Add(collidableZoneObject);
+        }
+
+        private void InitCollidableEnemy2()
+        {
+            Transform3D transform3D = null;
+            EffectParameters effectParameters = null;
+            IVertexData vertexData = null;
+            ICollisionPrimitive collisionPrimitive = null;
+            CollidableEnemy collidablePrimitiveObject = null;
+            PrimitiveType primitiveType;
+            int primitiveCount;
+
+            /************************* enemy 1 *************************/
+
+            transform3D = new Transform3D(new Vector3(170, 3, 400), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["redCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidableEnemy(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.Enemy,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager, 1, 1, collidablePlayerObject);
+
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+
+            /************************* Enemy 2 *************************/
+
+            transform3D = new Transform3D(new Vector3(170, 3, 300), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["redCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidableEnemy(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.Enemy,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager, 1, 1, collidablePlayerObject);
+
+            //add to the archetype dictionary
+          
+            objectManager.Add(collidablePrimitiveObject);
+
+        }
+
+        private void InitCollidablePickups2()
+        {
+            Transform3D transform3D = null;
+            EffectParameters effectParameters = null;
+            IVertexData vertexData = null;
+            ICollisionPrimitive collisionPrimitive = null;
+            CollidablePrimitiveObject collidablePrimitiveObject = null;
+            PrimitiveType primitiveType;
+            int primitiveCount;
+
+            /************************* Sphere Collision Primitive  *************************/
+
+            transform3D = new Transform3D(new Vector3(170, 4, 200), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_UnlitTextured],
+                textureDictionary["purpleCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionColorTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedOctahedron(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new SphereCollisionPrimitive(transform3D, 10);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidablePrimitiveObject(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.CollidablePickup,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+        }
+
+        private void InitCollidableObstacle2()
+        {
+            Transform3D transform3D = null;
+            EffectParameters effectParameters = null;
+            IVertexData vertexData = null;
+            ICollisionPrimitive collisionPrimitive = null;
+            CollidableObstacle collidablePrimitiveObject = null;
+            PrimitiveType primitiveType;
+            int primitiveCount;
+
+            /************************* Obstacle 1 *************************/
+
+            transform3D = new Transform3D(new Vector3(170, 3, 440), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["blueCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidableObstacle(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.Obstacle,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager, 1, 1, 10);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+
+            /************************* Obstacle 2 *************************/
+
+            transform3D = new Transform3D(new Vector3(170, 3, 420), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["blueCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidableObstacle(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.Obstacle,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager, 1, 1, 10);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+
+            /************************* Obstacle 3 *************************/
+
+            transform3D = new Transform3D(new Vector3(170, 3, 400), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["blueCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidableObstacle(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.Obstacle,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager, 1, 1, 10);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+        }
+
+        #endregion
+
+        #endregion NEW - 26.12.20
+
+        /// <summary>
+        /// Demos how we can clone an archetype and manually add to the object manager.
+        /// </summary>
         private void InitDecorators()
         {
             //clone the archetypal Pyramid

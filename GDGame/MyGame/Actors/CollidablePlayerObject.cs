@@ -136,7 +136,7 @@ namespace GDLibrary.MyGame
                     (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Yellow;
                     Transform3D.Translation = new Vector3(150, 2.5f, 500);
 
-                    deathCount++;
+                    deathCount += 1;
                 }
                 if (collidee.ActorType == ActorType.Obstacle)
                 {
@@ -148,7 +148,7 @@ namespace GDLibrary.MyGame
                     (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Purple;
                     Transform3D.Translation = new Vector3(170, 2.5f, 500);
 
-                    deathCount++;
+                    deathCount += 1;
                 }
             }
         }

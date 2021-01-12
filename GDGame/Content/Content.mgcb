@@ -406,6 +406,18 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/UI/Backgrounds/controlsmenu.png
 
+#begin Assets/Textures/UI/Backgrounds/endmenu.PNG
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/UI/Backgrounds/endmenu.PNG
+
 #begin Assets/Textures/UI/Backgrounds/exitmenu.png
 /importer:TextureImporter
 /processor:TextureProcessor
