@@ -243,7 +243,7 @@ namespace GDGame
             Window.Title = "Zero Deaths";
 
             isPaused = false;
-            level = 2;
+            level = 1;
             
             //graphic settings - see https://en.wikipedia.org/wiki/Display_resolution#/media/File:Vector_Video_Standards8.svg
             InitGraphics(1440, 1080);
@@ -805,7 +805,7 @@ namespace GDGame
 
                 InitCollidableEnemy1();
 
-                InitCollidableObstacle1();
+                //InitCollidableObstacle1();
 
                 InitCollidablePickups1();
 
@@ -816,7 +816,7 @@ namespace GDGame
                 /************ Level-loader (can be collidable or non-collidable) ************/
 
                 LevelLoader<PrimitiveObject> levelLoader = new LevelLoader<PrimitiveObject>(
-                    archetypeDictionary, textureDictionary, objectManager);
+                    archetypeDictionary, textureDictionary, objectManager, effectDictionary);
                 List<DrawnActor3D> actorList = null;
 
                 //add level1_1 contents
@@ -831,6 +831,15 @@ namespace GDGame
 
                 //clear the list otherwise when we add level1_2 we would re-add level1_1 objects to object manager
                 actorList.Clear();
+
+                actorList = levelLoader.Load(
+                   textureDictionary["level1_2"],
+                                   10,     //number of in-world x-units represented by 1 pixel in image
+                                   10,     //number of in-world z-units represented by 1 pixel in image
+                                   0,     //y-axis height offset
+                                   new Vector3(0, 0, 0) //offset to move all new objects by
+                                   );
+                objectManager.Add(actorList);
             }
 
 
@@ -855,7 +864,7 @@ namespace GDGame
 
                 InitCollidableEnemy2();
 
-                InitCollidableObstacle2();
+                //InitCollidableObstacle2();
 
                 InitCollidablePickups2();
 
@@ -866,12 +875,12 @@ namespace GDGame
                 /************ Level-loader (can be collidable or non-collidable) ************/
 
                 LevelLoader<PrimitiveObject> levelLoader = new LevelLoader<PrimitiveObject>(
-                    archetypeDictionary, textureDictionary, objectManager);
+                    archetypeDictionary, textureDictionary, objectManager, effectDictionary);
                 List<DrawnActor3D> actorList = null;
 
                 //add level1_1 contents
                 actorList = levelLoader.Load(
-                    textureDictionary["level1_2"],
+                    textureDictionary["level2_1"],
                                     10,     //number of in-world x-units represented by 1 pixel in image
                                     10,     //number of in-world z-units represented by 1 pixel in image
                                     15,     //y-axis height offset
@@ -1170,15 +1179,15 @@ namespace GDGame
 
             /************************* Obstacle 1 *************************/
 
-            transform3D = new Transform3D(new Vector3(170, 3, 440), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(170, 0, 440), Vector3.Zero, new Vector3(10, 10, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
-                textureDictionary["blueCube"], Color.White, 1);
+                textureDictionary["redCube"], Color.White, 1);
 
             //get the vertex data object
             vertexData = new VertexData<VertexPositionNormalTexture>(
-                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                VertexFactory.GetVerticesPositionNormalTexturedPyramid(
                                   out primitiveType, out primitiveCount),
                                   primitiveType, primitiveCount);
 
@@ -1187,76 +1196,17 @@ namespace GDGame
 
             //make a collidable object and pass in the primitive
             collidablePrimitiveObject = new CollidableObstacle(
-                GameConstants.Primitive_LitTexturedCube,
+                GameConstants.Primitive_LitTexturedPyramid,
                 ActorType.Obstacle,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
                 StatusType.Drawn | StatusType.Update,
                 transform3D,
                 effectParameters,
                 vertexData,
-                collisionPrimitive, objectManager, 1, 1, 10);
+                collisionPrimitive, objectManager, 1, 1, 1);
 
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
 
-            /************************* Obstacle 2 *************************/
-
-            transform3D = new Transform3D(new Vector3(170, 3, 420), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
-
-            //a unique effectparameters instance for each box in case we want different color, texture, alpha
-            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
-                textureDictionary["blueCube"], Color.White, 1);
-
-            //get the vertex data object
-            vertexData = new VertexData<VertexPositionNormalTexture>(
-                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
-                                  out primitiveType, out primitiveCount),
-                                  primitiveType, primitiveCount);
-
-            //make the collision primitive - changed slightly to no longer need transform
-            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
-
-            //make a collidable object and pass in the primitive
-            collidablePrimitiveObject = new CollidableObstacle(
-                GameConstants.Primitive_LitTexturedCube,
-                ActorType.Obstacle,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
-                StatusType.Drawn | StatusType.Update,
-                transform3D,
-                effectParameters,
-                vertexData,
-                collisionPrimitive, objectManager, 1, 1, 10);
-
-            //add to the archetype dictionary
-            objectManager.Add(collidablePrimitiveObject);
-
-            /************************* Obstacle 3 *************************/
-
-            transform3D = new Transform3D(new Vector3(170, 3, 400), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
-
-            //a unique effectparameters instance for each box in case we want different color, texture, alpha
-            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
-                textureDictionary["blueCube"], Color.White, 1);
-
-            //get the vertex data object
-            vertexData = new VertexData<VertexPositionNormalTexture>(
-                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
-                                  out primitiveType, out primitiveCount),
-                                  primitiveType, primitiveCount);
-
-            //make the collision primitive - changed slightly to no longer need transform
-            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
-
-            //make a collidable object and pass in the primitive
-            collidablePrimitiveObject = new CollidableObstacle(
-                GameConstants.Primitive_LitTexturedCube,
-                ActorType.Obstacle,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
-                StatusType.Drawn | StatusType.Update,
-                transform3D,
-                effectParameters,
-                vertexData,
-                collisionPrimitive, objectManager, 1, 1, 10);
-
-            //add to the archetype dictionary
-            objectManager.Add(collidablePrimitiveObject);
         }
 
         #endregion
@@ -1478,7 +1428,7 @@ namespace GDGame
                 transform3D,
                 effectParameters,
                 vertexData,
-                collisionPrimitive, objectManager, 1, 1, 10);
+                collisionPrimitive, objectManager, 1, 1, 1);
 
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
@@ -1508,7 +1458,7 @@ namespace GDGame
                 transform3D,
                 effectParameters,
                 vertexData,
-                collisionPrimitive, objectManager, 1, 1, 10);
+                collisionPrimitive, objectManager, 1, 1, 1);
 
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
@@ -1538,7 +1488,7 @@ namespace GDGame
                 transform3D,
                 effectParameters,
                 vertexData,
-                collisionPrimitive, objectManager, 1, 1, 10);
+                collisionPrimitive, objectManager, 1, 1, 1);
 
             //add to the archetype dictionary
             objectManager.Add(collidablePrimitiveObject);
@@ -1555,10 +1505,10 @@ namespace GDGame
         {
             //clone the archetypal Pyramid
             PrimitiveObject drawnActor3D
-                = archetypeDictionary[GameConstants.Primitive_LitTexturedCube].Clone() as PrimitiveObject;
+                = archetypeDictionary[GameConstants.Primitive_LitTexturedPyramid].Clone() as PrimitiveObject;
 
             //change it a bit
-            drawnActor3D.ID = "cube1";
+            drawnActor3D.ID = "Pyramid1";
             drawnActor3D.Transform3D.Scale = 10 * new Vector3(1, 1, 1);
             drawnActor3D.Transform3D.RotationInDegrees = new Vector3(0, 0, 0);
             drawnActor3D.Transform3D.Translation = new Vector3(150, 10, 500);

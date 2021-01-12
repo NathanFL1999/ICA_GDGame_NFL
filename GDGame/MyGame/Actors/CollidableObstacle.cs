@@ -30,20 +30,6 @@ namespace GDGame.MyGame.Actors
 
         public override void Update(GameTime gameTime)
         {
-
-            
-            Vector3 movement = new Vector3(0, 0, 0);
-            if (direction == 1)
-            {
-                this.Transform3D.TranslateBy(new Vector3(MathF.Sin((float)(1f * gameTime.TotalGameTime.TotalSeconds / 4) * 20f), 0, 0));
-            }
-
-            else if (direction == 2)
-            {
-                this.Transform3D.TranslateBy(new Vector3(0, 0, MathF.Sin((float)(1f * gameTime.TotalGameTime.TotalSeconds / 4) * 20f)));
-            }
-
-            //reset translate and rotate and update primitive
             base.Update(gameTime);
         }
 

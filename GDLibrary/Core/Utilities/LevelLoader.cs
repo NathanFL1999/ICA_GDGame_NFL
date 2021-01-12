@@ -1,7 +1,10 @@
 ﻿using GDGame;
+using GDGame.MyGame.Actors;
 using GDLibrary.Actors;
 using GDLibrary.Containers;
 using GDLibrary.Enums;
+using GDLibrary.Factories;
+using GDLibrary.Interfaces;
 using GDLibrary.Managers;
 using GDLibrary.Parameters;
 using Microsoft.Xna.Framework;
@@ -29,13 +32,16 @@ namespace GDLibrary.Utilities
         private Dictionary<string, T> archetypeDictionary;
         private ContentDictionary<Texture2D> textureDictionary;
         private ObjectManager objectManager;
+        private Dictionary<string, BasicEffect> effectDictionary;
+
 
         public LevelLoader(Dictionary<string, T> archetypeDictionary,
-            ContentDictionary<Texture2D> textureDictionary, ObjectManager objectManager)
+            ContentDictionary<Texture2D> textureDictionary, ObjectManager objectManager, Dictionary<string, BasicEffect> effectDictionary)
         {
             this.archetypeDictionary = archetypeDictionary;
             this.textureDictionary = textureDictionary;
             this.objectManager = objectManager;
+            this.effectDictionary = effectDictionary; 
         }
 
         public List<DrawnActor3D> Load(Texture2D texture,
@@ -94,7 +100,7 @@ namespace GDLibrary.Utilities
 
                 //change it a bit
                 drawnActor3D.ID = "cube " + count++;
-                drawnActor3D.Transform3D.Scale = 10 * new Vector3(2, 3, 2);
+                drawnActor3D.Transform3D.Scale = 10 * new Vector3(2, 3, 1);
                 drawnActor3D.EffectParameters.Texture = textureDictionary["walls"];
                 drawnActor3D.EffectParameters.Alpha = 1;
                 drawnActor3D.Transform3D.Translation = translation;
@@ -116,12 +122,38 @@ namespace GDLibrary.Utilities
 
                 return collidablePrimitiveObject;
             }
+
             else if (color.Equals(new Color(0, 0, 255)))
             {
-                //enemy instance
-                return null;
+                PrimitiveObject archetype
+                       = archetypeDictionary["lit textured pyramid"] as PrimitiveObject;
+
+                PrimitiveObject drawnActor3D = archetype.Clone() as PrimitiveObject;
+
+                //change it a bit
+                drawnActor3D.ID = "Pyramid " + count++;
+                drawnActor3D.Transform3D.Scale = 10 * new Vector3(1, 1, 1);
+                drawnActor3D.EffectParameters.Texture = textureDictionary["redCube"];
+                drawnActor3D.EffectParameters.Alpha = 1;
+                drawnActor3D.Transform3D.Translation = translation;
+                drawnActor3D.Transform3D.RotationInDegrees = new Vector3(0, 0, 0);
+
+
+                BoxCollisionPrimitive collisionPrimitive = new BoxCollisionPrimitive(drawnActor3D.Transform3D);
+
+                //make a collidable object and pass in the primitive
+                CollidablePrimitiveObject collidablePrimitiveObject = new CollidablePrimitiveObject(
+                    drawnActor3D.ID,
+                    ActorType.CollidableObstacle,
+                    StatusType.Update | StatusType.Drawn,
+                    drawnActor3D.Transform3D,
+                    drawnActor3D.EffectParameters,
+                    drawnActor3D.IVertexData,
+                    collisionPrimitive,
+                    objectManager);
+
+                return collidablePrimitiveObject;
             }
-            //add an else if for each type of object that you want to load...
 
             return null;
         }

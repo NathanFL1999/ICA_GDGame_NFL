@@ -30,7 +30,7 @@ namespace GDLibrary.MyGame
         {
             this.moveKeys = moveKeys;
             this.moveSpeed = moveSpeed;
-            this.rotationSpeed = rotationSpeed;
+            this.rotationSpeed = 0.1f;
 
             //for movement
             this.keyboardManager = keyboardManager;
@@ -138,15 +138,14 @@ namespace GDLibrary.MyGame
 
                     deathCount += 1;
                 }
-                if (collidee.ActorType == ActorType.Obstacle)
+                if (collidee.ActorType == ActorType.CollidableObstacle)
                 {
-
                     object[] parameters = { "lose" };
                     EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
                       EventActionType.OnPlay2D, parameters));
 
-                    (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Purple;
-                    Transform3D.Translation = new Vector3(170, 2.5f, 500);
+                    (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Yellow;
+                    Transform3D.Translation = new Vector3(150, 2.5f, 500);
 
                     deathCount += 1;
                 }

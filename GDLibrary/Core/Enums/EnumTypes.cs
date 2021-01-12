@@ -46,6 +46,7 @@
         UIMouse,
         CollidableZone,
         CollidablePlayer,
+        CollidableObstacle,
     }
 
     /// <summary>

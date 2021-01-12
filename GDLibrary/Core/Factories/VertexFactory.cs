@@ -559,9 +559,53 @@ namespace GDLibrary.Factories
             return vertices;
         }
 
-            /******************************************** Textured & Normal - Cube ********************************************/
+        public static VertexPositionColorTexture[] GetVerticesPositionTexturedTetrahedron(int sidelength, out PrimitiveType primitiveType, out int primitiveCount)
+        {
+            primitiveType = PrimitiveType.TriangleList;
+            primitiveCount = 4;
 
-            public static VertexPositionNormalTexture[] GetVerticesPositionNormalTexturedPyramid(
+            VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[12];
+            float halfSideLength = sidelength / 2.0f;
+
+            Vector3 topCentre = new Vector3(0, 0.71f * sidelength, 0); //multiplier gives a pyramid where the length of the rising edges == length of the base edges
+            Vector3 frontLeft = new Vector3(-halfSideLength, 0, halfSideLength);
+            Vector3 frontRight = new Vector3(halfSideLength, 0, halfSideLength);
+            Vector3 backLeft = new Vector3(-halfSideLength, 0, -halfSideLength);
+            Vector3 backRight = new Vector3(halfSideLength, 0, -halfSideLength);
+
+            Vector2 uvTopCentre = new Vector2(0.5f, 0);
+            Vector2 uvTopLeft = new Vector2(0, 0);
+            Vector2 uvTopRight = new Vector2(1, 0);
+            Vector2 uvBottomLeft = new Vector2(0, 1);
+            Vector2 uvBottomRight = new Vector2(1, 1);
+
+            //front
+            vertices[0] = new VertexPositionColorTexture(topCentre, Color.White, uvTopCentre);
+            vertices[1] = new VertexPositionColorTexture(frontRight, Color.White, uvBottomRight);
+            vertices[2] = new VertexPositionColorTexture(frontLeft, Color.White, uvBottomLeft);
+
+            //left
+            vertices[3] = new VertexPositionColorTexture(topCentre, Color.White, uvTopCentre);
+            vertices[4] = new VertexPositionColorTexture(frontLeft, Color.White, uvBottomRight);
+            vertices[5] = new VertexPositionColorTexture(backLeft, Color.White, uvBottomLeft);
+
+            //right
+            vertices[6] = new VertexPositionColorTexture(topCentre, Color.White, uvTopCentre);
+            vertices[7] = new VertexPositionColorTexture(backRight, Color.White, uvBottomRight);
+            vertices[8] = new VertexPositionColorTexture(frontRight, Color.White, uvBottomLeft);
+
+
+            //bottom
+            vertices[9] = new VertexPositionColorTexture(frontLeft, Color.White, uvTopLeft);
+            vertices[10] = new VertexPositionColorTexture(frontRight, Color.White, uvTopRight);
+            vertices[11] = new VertexPositionColorTexture(backLeft, Color.White, uvBottomLeft);
+
+            return vertices;
+        }
+
+        /******************************************** Textured & Normal - Cube ********************************************/
+
+        public static VertexPositionNormalTexture[] GetVerticesPositionNormalTexturedPyramid(
                             out PrimitiveType primitiveType,
                                         out int primitiveCount)
         {
