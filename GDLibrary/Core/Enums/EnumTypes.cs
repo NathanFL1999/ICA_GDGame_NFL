@@ -197,6 +197,7 @@
         OnResetStart,
         OnApplyActionToFirstMatchActor,
         OnApplyActionToAllActors,
+        OnDeathCountChange,
 
         //add more here...
     }

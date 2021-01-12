@@ -85,13 +85,13 @@ namespace GDLibrary.MyGame
                 Transform3D.TranslateIncrement += Transform3D.Right * gameTime.ElapsedGameTime.Milliseconds * moveSpeed;
             }
 
-            if (keyboardManager.IsFirstKeyPress(moveKeys[4])) //Rotate Right
+            if (keyboardManager.IsKeyDown(moveKeys[4])) //Rotate Right
             {
-                Transform3D.RotateAroundUpBy(-90);
+                Transform3D.RotateIncrement = -gameTime.ElapsedGameTime.Milliseconds * rotationSpeed;
             }
-            else if (keyboardManager.IsFirstKeyPress(moveKeys[5])) //Rotate Left
+            else if (keyboardManager.IsKeyDown(moveKeys[5])) //Rotate Left
             {
-                Transform3D.RotateAroundUpBy(90);
+                Transform3D.RotateIncrement = gameTime.ElapsedGameTime.Milliseconds * rotationSpeed;
             }
 
         }

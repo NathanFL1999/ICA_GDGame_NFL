@@ -515,7 +515,9 @@ namespace GDGame
             curveA.Add(new Vector3(200, 120, 200), new Vector3(5, -3, -2), Vector3.UnitY, 8000); //start position
             curveA.Add(new Vector3(200, 120, 100), new Vector3(5, -3, -2), Vector3.UnitY, 10000); //start position
             curveA.Add(new Vector3(350, 120, 100), new Vector3(5, -5, 0), Vector3.UnitY, 12000); //start position
-            curveA.Add(new Vector3(350, 30, 80), new Vector3(5, -5, 0), Vector3.UnitY, 14000); //start position
+            curveA.Add(new Vector3(350, 30, 80), new Vector3(5, -2, 0), Vector3.UnitY, 14000); //start position
+            curveA.Add(new Vector3(400, 10, 80), new Vector3(5, -1, 0), Vector3.UnitY, 16000); //start position
+            curveA.Add(new Vector3(400, 10, 80), new Vector3(5, -1, 0), Vector3.UnitY, 16000); //start position
 
             //add to the dictionary
             transform3DCurveDictionary.Add("intro", curveA);
@@ -937,7 +939,7 @@ namespace GDGame
 
             /************************* Enemy 2 *************************/
 
-            transform3D = new Transform3D(new Vector3(400, 3, 480), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(490, 3, 350), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
@@ -967,7 +969,7 @@ namespace GDGame
 
             /************************* Enemy 3 *************************/
 
-            transform3D = new Transform3D(new Vector3(330, 3, 120), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(400, 3, 480), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
@@ -996,6 +998,36 @@ namespace GDGame
             objectManager.Add(collidablePrimitiveObject);
 
             /************************* Enemy 4 *************************/
+
+            transform3D = new Transform3D(new Vector3(330, 3, 120), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+
+            //a unique effectparameters instance for each box in case we want different color, texture, alpha
+            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
+                textureDictionary["redCube"], Color.White, 1);
+
+            //get the vertex data object
+            vertexData = new VertexData<VertexPositionNormalTexture>(
+                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
+                                  out primitiveType, out primitiveCount),
+                                  primitiveType, primitiveCount);
+
+            //make the collision primitive - changed slightly to no longer need transform
+            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
+
+            //make a collidable object and pass in the primitive
+            collidablePrimitiveObject = new CollidableEnemy(
+                GameConstants.Primitive_LitTexturedCube,
+                ActorType.Enemy,  //this is important as it will determine how we filter collisions in our collidable player CDCR code
+                StatusType.Drawn | StatusType.Update,
+                transform3D,
+                effectParameters,
+                vertexData,
+                collisionPrimitive, objectManager, 1, 1, collidablePlayerObject);
+
+            //add to the archetype dictionary
+            objectManager.Add(collidablePrimitiveObject);
+
+            /************************* Enemy 5 *************************/
 
             transform3D = new Transform3D(new Vector3(330, 3, 40), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
@@ -1038,7 +1070,7 @@ namespace GDGame
 
             /************************* Sphere Collision Primitive  *************************/
 
-            transform3D = new Transform3D(new Vector3(350, 4, 80), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(450, 4, 80), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_UnlitTextured],

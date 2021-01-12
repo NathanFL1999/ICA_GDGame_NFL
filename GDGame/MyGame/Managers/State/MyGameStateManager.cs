@@ -1,4 +1,5 @@
-﻿using GDLibrary.Enums;
+﻿using GDLibrary.Actors;
+using GDLibrary.Enums;
 using GDLibrary.Events;
 using GDLibrary.GameComponents;
 using GDLibrary.Interfaces;
@@ -11,8 +12,13 @@ namespace GDLibrary.Core.Managers.State
     /// </summary>
     public class MyGameStateManager : PausableGameComponent, IEventHandler
     {
-        public MyGameStateManager(Game game, StatusType statusType) : base(game, statusType)
+
+        private UITextObject deathCountTextObject;
+        private int deathCount;
+        public MyGameStateManager(Game game, StatusType statusType, UITextObject deathCountTextObject) : base(game, statusType)
         {
+            this.deathCount = 0;
+            this.deathCountTextObject = deathCountTextObject;
         }
 
         public override void SubscribeToEvents()
@@ -24,9 +30,14 @@ namespace GDLibrary.Core.Managers.State
 
         public override void HandleEvent(EventData eventData)
         {
-            //add new if...else if statements to handle events here..
-
-            //remember to pass the eventData down so the parent class can process pause/unpause
+            if (eventData.EventCategoryType == EventCategoryType.UI)
+            {
+                if (eventData.EventActionType == EventActionType.OnDeathCountChange)
+                {
+                    deathCount += (int)eventData.Parameters[0];
+                    deathCountTextObject.Text = "Death Count: " + deathCount;
+                }
+            }
             base.HandleEvent(eventData);
         }
 
