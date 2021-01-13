@@ -142,6 +142,18 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Cubes/redCube.png
 
+#begin Assets/Textures/Cubes/Warning.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/Cubes/Warning.png
+
 #begin Assets/Textures/Foliage/Ground/cobblestone.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -298,6 +310,18 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Level/level2_1.png
 
+#begin Assets/Textures/Level/level2_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/Level/level2_2.png
+
 #begin Assets/Textures/Level/walls.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -334,7 +358,7 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Props/Crates/crate5.jpg
 
-#begin Assets/Textures/Skybox/back.bmp
+#begin Assets/Textures/Skybox/back.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -344,55 +368,55 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Assets/Textures/Skybox/back.bmp
+/build:Assets/Textures/Skybox/back.png
 
-#begin Assets/Textures/Skybox/front.bmp
+#begin Assets/Textures/Skybox/front.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
+/processorParam:ColorKeyEnabled=True
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Assets/Textures/Skybox/front.bmp
+/build:Assets/Textures/Skybox/front.png
 
-#begin Assets/Textures/Skybox/left.bmp
+#begin Assets/Textures/Skybox/left.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
+/processorParam:ColorKeyEnabled=True
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Assets/Textures/Skybox/left.bmp
+/build:Assets/Textures/Skybox/left.png
 
-#begin Assets/Textures/Skybox/right.bmp
+#begin Assets/Textures/Skybox/right.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
+/processorParam:ColorKeyEnabled=True
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Assets/Textures/Skybox/right.bmp
+/build:Assets/Textures/Skybox/right.png
 
-#begin Assets/Textures/Skybox/sky.bmp
+#begin Assets/Textures/Skybox/sky.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
+/processorParam:ColorKeyEnabled=True
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Assets/Textures/Skybox/sky.bmp
+/build:Assets/Textures/Skybox/sky.png
 
 #begin Assets/Textures/UI/Backgrounds/audiomenu.png
 /importer:TextureImporter
@@ -405,6 +429,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/UI/Backgrounds/audiomenu.png
+
+#begin Assets/Textures/UI/Backgrounds/controls.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/UI/Backgrounds/controls.png
 
 #begin Assets/Textures/UI/Backgrounds/controlsmenu.png
 /importer:TextureImporter

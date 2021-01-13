@@ -133,7 +133,7 @@ namespace GDLibrary.Utilities
                 //change it a bit
                 drawnActor3D.ID = "Pyramid " + count++;
                 drawnActor3D.Transform3D.Scale = 10 * new Vector3(1, 1, 1);
-                drawnActor3D.EffectParameters.Texture = textureDictionary["redCube"];
+                drawnActor3D.EffectParameters.Texture = textureDictionary["Warning"];
                 drawnActor3D.EffectParameters.Alpha = 1;
                 drawnActor3D.Transform3D.Translation = translation;
                 drawnActor3D.Transform3D.RotationInDegrees = new Vector3(0, 0, 0);
