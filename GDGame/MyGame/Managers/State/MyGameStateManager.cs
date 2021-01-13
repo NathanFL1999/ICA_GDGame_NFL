@@ -15,17 +15,17 @@ namespace GDLibrary.Core.Managers.State
 
         private UITextObject deathCountTextObject;
         private int deathCount;
+        private int level;
         public MyGameStateManager(Game game, StatusType statusType, UITextObject deathCountTextObject) : base(game, statusType)
         {
             this.deathCount = 0;
+            this.level = 1;
             this.deathCountTextObject = deathCountTextObject;
         }
 
         public override void SubscribeToEvents()
         {
-            //add new events here...
-
-            base.SubscribeToEvents();
+            EventDispatcher.Subscribe(EventCategoryType.UI, HandleEvent);
         }
 
         public override void HandleEvent(EventData eventData)
@@ -36,6 +36,15 @@ namespace GDLibrary.Core.Managers.State
                 {
                     deathCount += (int)eventData.Parameters[0];
                     deathCountTextObject.Text = "Death Count: " + deathCount;
+                }
+            }
+
+            else if(eventData.EventCategoryType == EventCategoryType.Player)
+            {
+                if (eventData.EventActionType == EventActionType.OnWin)
+                {
+                    level += (int)eventData.Parameters[0];
+                    level ++;
                 }
             }
             base.HandleEvent(eventData);

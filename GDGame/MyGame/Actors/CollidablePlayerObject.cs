@@ -22,6 +22,11 @@ namespace GDLibrary.MyGame
         private Keys[] moveKeys;
         #endregion Fields
 
+        public int DeathCount
+        {
+            get { return deathCount; }
+        }
+
         public CollidablePlayerObject(string id, ActorType actorType, StatusType statusType, Transform3D transform,
             EffectParameters effectParameters, IVertexData vertexData,
             ICollisionPrimitive collisionPrimitive, ObjectManager objectManager,
@@ -125,6 +130,11 @@ namespace GDLibrary.MyGame
                     //remove the object
                     object[] parameters = { collidee };
                     EventDispatcher.Publish(new EventData(EventCategoryType.Object, EventActionType.OnRemoveActor, parameters));
+
+                    object[] parameters2 = new object[] { 1 };
+                    EventDispatcher.Publish(new EventData(EventCategoryType.Player, EventActionType.OnWin, parameters2));
+
+
                 }
                 //the boxes on the right that move up and down
                 else if (collidee.ActorType == ActorType.Enemy)
@@ -136,7 +146,7 @@ namespace GDLibrary.MyGame
                     (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Yellow;
                     Transform3D.Translation = new Vector3(150, 2.5f, 500);
 
-                    deathCount += 1;
+                    
                 }
                 if (collidee.ActorType == ActorType.CollidableObstacle)
                 {
@@ -147,7 +157,8 @@ namespace GDLibrary.MyGame
                     (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Yellow;
                     Transform3D.Translation = new Vector3(150, 2.5f, 500);
 
-                    deathCount += 1;
+                    object[] parameters2 = new object[] { 1 };
+                    EventDispatcher.Publish(new EventData(EventCategoryType.UI, EventActionType.OnDeathCountChange, parameters2));
                 }
             }
         }

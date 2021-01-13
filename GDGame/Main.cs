@@ -8,6 +8,7 @@ using GDLibrary.Actors;
 using GDLibrary.Containers;
 using GDLibrary.Controllers;
 using GDLibrary.Core.Controllers;
+using GDLibrary.Core.Managers.State;
 using GDLibrary.Debug;
 using GDLibrary.Enums;
 using GDLibrary.Events;
@@ -294,7 +295,6 @@ namespace GDGame
             #endregion Debug
 
 
-          
             object[] parameters = { "GameSong" };
             EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
               EventActionType.OnPlay2D, parameters));
@@ -386,14 +386,14 @@ namespace GDGame
             #endregion Progress Control Left
 
             //Death Count UI
-            #region Text Object
+            #region Death Count
             spriteFont = Content.Load<SpriteFont>("Assets/Fonts/menu");
 
             string text = "Death Count : 0";
             Vector2 originalDimensions = spriteFont.MeasureString(text);
 
             transform2D = new Transform2D(
-               new Vector2(27 + originalDimensions.X / 2, 16 + originalDimensions.Y / 2), 0,
+               new Vector2(27 + originalDimensions.X / 2, 20 + originalDimensions.Y / 2), 0,
                Vector2.One,
                new Vector2(originalDimensions.X / 2, originalDimensions.Y / 2),
                new Integer2(originalDimensions));
@@ -409,6 +409,11 @@ namespace GDGame
             deathCount.ControllerList.Add(controller);
 
             uiManager.Add(deathCount);
+
+            MyGameStateManager gameStateManager = new MyGameStateManager(this,
+                StatusType.Off, deathCount);
+
+            Components.Add(gameStateManager);
 
             #endregion Text Object
         }
@@ -1114,7 +1119,7 @@ namespace GDGame
 
             /************************* Sphere Collision Primitive  *************************/
 
-            transform3D = new Transform3D(new Vector3(450, 4, 80), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(150, 2.5f, 500), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_UnlitTextured],
