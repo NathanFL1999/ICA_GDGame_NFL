@@ -344,6 +344,17 @@ namespace GDGame
             Texture2D texture = null;
             SpriteFont spriteFont = null;
 
+            texture = textureDictionary["metal"];
+
+            transform2D = new Transform2D(screenCentre, 0,
+                Vector2.One,
+                new Vector2(texture.Width / 2, texture.Height / 2),
+                new Integer2(texture.Width, texture.Height));
+
+            UITextureObject endMenu = new UITextureObject("End", ActorType.UITextureObject,
+                StatusType.Drawn, transform2D, Color.White, 1, SpriteEffects.None, texture,
+                new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height));
+
             //Death Count UI
             #region Death Count
             spriteFont = Content.Load<SpriteFont>("Assets/Fonts/menu");
@@ -371,18 +382,6 @@ namespace GDGame
             MyGameStateManager gameStateManager = new MyGameStateManager(this,
                 StatusType.Off, deathCount);
 
-            texture = textureDictionary["metal"];
-
-            transform2D = new Transform2D(screenCentre, 0,
-                Vector2.One,
-                new Vector2(texture.Width / 2, texture.Height / 2),
-                new Integer2(texture.Width, texture.Height));
-
-            UITextureObject endMenu = new UITextureObject("End", ActorType.UITextureObject,
-                StatusType.Drawn, transform2D, Color.White, 1, SpriteEffects.None, texture,
-                new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height));
-
-
             texture = textureDictionary["genericbtn"];
 
             transform2D = new Transform2D(screenCentre + new Vector2(0, 160), 0,
@@ -399,23 +398,17 @@ namespace GDGame
                 Color.Black,
                 new Vector2(0, 0));
 
-            //button.ControllerList.Add(new UIMouseOverController("moc2", ControllerType.MouseOver,
-            // mouseManager, Color.Purple, Color.White));
-
-            //button.ControllerList.Add(new UIScaleLerpController("slc2", ControllerType.ScaleLerpOverTime,
-            //  mouseManager, new TrigonometricParameters(0.02f, 1, 0)));
-
             menuManager.Add("end", button);
 
             menuManager.Add("end", endMenu);
+
+            menuManager.Add("end", deathCount);
 
             uiManager.Add(deathCount);
 
             Components.Add(gameStateManager);
 
             #endregion Text Object
-
-          
         }
 
         private void InitMenu()
@@ -1119,7 +1112,7 @@ namespace GDGame
 
             /************************* Sphere Collision Primitive  *************************/
 
-            transform3D = new Transform3D(new Vector3(150, 4, 500), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(450, 4, 80), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_UnlitTextured],

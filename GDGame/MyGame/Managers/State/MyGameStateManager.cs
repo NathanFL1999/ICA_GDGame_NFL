@@ -4,6 +4,7 @@ using GDLibrary.Enums;
 using GDLibrary.Events;
 using GDLibrary.GameComponents;
 using GDLibrary.Interfaces;
+using GDLibrary.Managers;
 using GDLibrary.Parameters;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +21,7 @@ namespace GDLibrary.Core.Managers.State
         private UITextObject deathCountTextObject;
         private int deathCount;
         private int level;
+
         public MyGameStateManager(Game game, StatusType statusType, UITextObject deathCountTextObject) : base(game, statusType)
         {
             this.deathCount = 0;
@@ -27,9 +29,11 @@ namespace GDLibrary.Core.Managers.State
             this.deathCountTextObject = deathCountTextObject;
         }
 
+
     public override void SubscribeToEvents()
         {
             EventDispatcher.Subscribe(EventCategoryType.UI, HandleEvent);
+            EventDispatcher.Subscribe(EventCategoryType.Player, HandleEvent);
         }
 
 
@@ -48,10 +52,16 @@ namespace GDLibrary.Core.Managers.State
             {
                 if (eventData.EventActionType == EventActionType.OnWin)
                 {
-                    level += (int)eventData.Parameters[0];
+                    level += (int)eventData.Parameters[0];                 
                     level++;
                 }
+                else if (eventData.EventActionType == EventActionType.OnGameOver)
+                {
+                    EndScreen();
+                }
             }
+
+        
 
             base.HandleEvent(eventData);
         }
@@ -65,17 +75,7 @@ namespace GDLibrary.Core.Managers.State
 
         private void EndScreen()
         {
-            List<DrawnActor2D> loadedTextures = new List<DrawnActor2D>();
-
-            UITextObject clone = deathCountTextObject.Clone() as UITextObject;
-            clone.Transform2D.Translation = new Vector2(500, 500);
-            loadedTextures.Add(clone);
-
-            EventDispatcher.Publish(new EventData(EventCategoryType.Player,
-                EventActionType.OnGameOver, new object[] { loadedTextures }));
-
-            deathCount = 0;
-            deathCountTextObject.Text = "Death Count: " + deathCount;
+            deathCountTextObject.Transform2D.Translation = new Vector2(720, 540);
         }
     }
 }
