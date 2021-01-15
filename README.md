@@ -10,7 +10,7 @@ Game Concept
     
 Controls
 
--   The player is controlled useing WASD 
+-   The player is controlled using WASD 
 -   The camera can be rotated using Q & E
 
 Music 
