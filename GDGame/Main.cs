@@ -34,6 +34,7 @@ namespace GDGame
         private SpriteBatch _spriteBatch;
         private bool isPaused;
         private int level;
+        private bool levelLoaded;
 
         private CameraManager<Camera3D> cameraManager;
         private ObjectManager objectManager;
@@ -222,6 +223,8 @@ namespace GDGame
             textureDictionary.Load("Assets/Textures/UI/Buttons/ExitButton");
             textureDictionary.Load("Assets/Textures/UI/Buttons/ExitcolButton");
             textureDictionary.Load("Assets/Textures/UI/Backgrounds/controls");
+            textureDictionary.Load("Assets/Textures/UI/Backgrounds/endmenu");
+            textureDictionary.Load("Assets/Textures/UI/Backgrounds/metal");
 
             //ui
             textureDictionary.Load("Assets/Textures/UI/Controls/reticuleDefault");
@@ -243,12 +246,14 @@ namespace GDGame
         protected override void Initialize()
         {
             float worldScale = 2000;
+
             //set game title
             Window.Title = "Zero Deaths";
 
             isPaused = false;
             level = 1;
-            
+            levelLoaded = false;
+
             //graphic settings - see https://en.wikipedia.org/wiki/Display_resolution#/media/File:Vector_Video_Standards8.svg
             InitGraphics(1440, 1080);
 
@@ -339,52 +344,6 @@ namespace GDGame
             Texture2D texture = null;
             SpriteFont spriteFont = null;
 
-            //#region Mouse Reticule & Text
-            //texture = textureDictionary["reticuleDefault"];
-
-            //transform2D = new Transform2D(
-            //    new Vector2(512, 384), //this value doesnt matter since we will recentre in UIMouseObject::Update()
-            //    0,
-            //     Vector2.One,
-            //    new Vector2(texture.Width / 2, texture.Height / 2),
-            //    new Integer2(45, 46)); //read directly from the PNG file dimensions
-
-            //UIMouseObject uiMouseObject = new UIMouseObject("reticule", ActorType.UIMouse,
-            //    StatusType.Update | StatusType.Drawn, transform2D, Color.White,
-            //    SpriteEffects.None, fontDictionary["menu"],
-            //    "Hello there!",
-            //    new Vector2(0, -40),
-            //    Color.Yellow,
-            //    0.75f * Vector2.One,
-            //    0,
-            //    texture,
-            //    new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height), //how much of source image do we want to draw?
-            //    mouseManager);
-
-            //uiManager.Add(uiMouseObject);
-            //#endregion Mouse Reticule & Text
-
-            #region Progress Control Left
-            texture = textureDictionary["progress_white"];
-
-            transform2D = new Transform2D(new Vector2(512, 20),
-                0,
-                 Vector2.One,
-                new Vector2(texture.Width / 2, texture.Height / 2),
-                new Integer2(100, 100));
-
-            UITextureObject uiTextureObject = new UITextureObject("progress 1", ActorType.UITextureObject,
-                StatusType.Drawn | StatusType.Update, transform2D, Color.Yellow, 0, SpriteEffects.None,
-                texture,
-                new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height));
-
-
-
-            uiTextureObject.ControllerList.Add(new UIProgressController("pc1", ControllerType.Progress, 0, 10));
-
-            uiManager.Add(uiTextureObject);
-            #endregion Progress Control Left
-
             //Death Count UI
             #region Death Count
             spriteFont = Content.Load<SpriteFont>("Assets/Fonts/menu");
@@ -392,12 +351,11 @@ namespace GDGame
             string text = "Death Count : 0";
             Vector2 originalDimensions = spriteFont.MeasureString(text);
 
-            transform2D = new Transform2D(
-               new Vector2(27 + originalDimensions.X / 2, 20 + originalDimensions.Y / 2), 0,
-               Vector2.One,
-               new Vector2(originalDimensions.X / 2, originalDimensions.Y / 2),
-               new Integer2(originalDimensions));
-
+                transform2D = new Transform2D(
+              new Vector2(27 + originalDimensions.X / 2, 20 + originalDimensions.Y / 2), 0,
+              Vector2.One,
+              new Vector2(originalDimensions.X / 2, originalDimensions.Y / 2),
+              new Integer2(originalDimensions));
 
             UITextObject deathCount = new UITextObject("deathCount", ActorType.UIText,
                 StatusType.Drawn, transform2D,
@@ -413,9 +371,51 @@ namespace GDGame
             MyGameStateManager gameStateManager = new MyGameStateManager(this,
                 StatusType.Off, deathCount);
 
+            texture = textureDictionary["metal"];
+
+            transform2D = new Transform2D(screenCentre, 0,
+                Vector2.One,
+                new Vector2(texture.Width / 2, texture.Height / 2),
+                new Integer2(texture.Width, texture.Height));
+
+            UITextureObject endMenu = new UITextureObject("End", ActorType.UITextureObject,
+                StatusType.Drawn, transform2D, Color.White, 1, SpriteEffects.None, texture,
+                new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height));
+
+
+            texture = textureDictionary["genericbtn"];
+
+            transform2D = new Transform2D(screenCentre + new Vector2(0, 160), 0,
+                Vector2.One,
+                new Vector2(texture.Width / 2, texture.Height / 2),
+                new Integer2(texture.Width, texture.Height));
+
+            UIButtonObject button = new UIButtonObject("End_Button", ActorType.UITextureObject,
+                StatusType.Drawn, transform2D, Color.White, 3, SpriteEffects.None, texture,
+                new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height),
+                "Exit",
+                fontDictionary["menu"],
+                Vector2.One,
+                Color.Black,
+                new Vector2(0, 0));
+
+            //button.ControllerList.Add(new UIMouseOverController("moc2", ControllerType.MouseOver,
+            // mouseManager, Color.Purple, Color.White));
+
+            //button.ControllerList.Add(new UIScaleLerpController("slc2", ControllerType.ScaleLerpOverTime,
+            //  mouseManager, new TrigonometricParameters(0.02f, 1, 0)));
+
+            menuManager.Add("end", button);
+
+            menuManager.Add("end", endMenu);
+
+            uiManager.Add(deathCount);
+
             Components.Add(gameStateManager);
 
             #endregion Text Object
+
+          
         }
 
         private void InitMenu()
@@ -452,13 +452,6 @@ namespace GDGame
                 transform2D, Color.White, 1, SpriteEffects.None, texture, new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height));
             menuManager.Add("controls", uiObject);
 
-            //background exit
-            texture = textureDictionary["exitmenuwithtrans"];
-            fullScreenScaleFactor = new Vector2((float)_graphics.PreferredBackBufferWidth / texture.Width, (float)_graphics.PreferredBackBufferHeight / texture.Height);
-            transform2D = new Transform2D(fullScreenScaleFactor);
-            uiObject = new UITextureObject("exit_bckgnd", ActorType.UITextureObject, StatusType.Drawn,
-                transform2D, Color.White, 1, SpriteEffects.None, texture, new Microsoft.Xna.Framework.Rectangle(0, 0, texture.Width, texture.Height));
-            menuManager.Add("exit", uiObject);
             #endregion All Menu Background Images
 
             //main menu buttons
@@ -488,6 +481,7 @@ namespace GDGame
 
             menuManager.Add("main", uiObject);
 
+
             //exit
             transform2D = new Transform2D(screenCentre + new Vector2(0, 225), 0, Vector2.One, origin, imageDimensions);
             uiObject = new UIButtonObject("exit", ActorType.UITextureObject,
@@ -516,6 +510,29 @@ namespace GDGame
         {
             eventDispatcher = new EventDispatcher(this);
             Components.Add(eventDispatcher);
+
+            EventDispatcher.Subscribe(EventCategoryType.Player, HandleEvent);
+        }
+
+        private void HandleEvent(EventData eventData)
+        {
+            if (eventData.EventCategoryType == EventCategoryType.Player)
+            {
+                if (eventData.EventActionType == EventActionType.OnWin)
+                {
+                    level = (int)eventData.Parameters[0];
+                    levelLoaded = false;
+                    cameraManager.ActiveCameraIndex = 1;
+                }
+            }
+
+            else if (eventData.EventCategoryType == EventCategoryType.End)
+            {
+                if (eventData.EventActionType == EventActionType.OnGameOver)
+                {
+                    menuManager.SetScene("end");
+                }
+            }
         }
 
         private void InitCurves()
@@ -540,6 +557,61 @@ namespace GDGame
         {
             //create the track to be applied to the non-collidable track camera 1
             railDictionary.Add("rail1", new RailParameters("rail1 - parallel to z-axis", new Vector3(20, 10, 50), new Vector3(20, 10, -50)));
+        }
+
+        private void InitCameras3D()
+        {
+            Transform3D transform3D = null;
+            Camera3D camera3D = null;
+            Viewport viewPort = new Viewport(0, 0, 1440, 1080);
+
+            #region Noncollidable Camera - Curve3D
+
+            //notice that it doesnt matter what translation, look, and up are since curve will set these
+            transform3D = new Transform3D(Vector3.Zero, Vector3.Zero, Vector3.Zero);
+
+            camera3D = new Camera3D(GameConstants.Camera_NonCollidableCurveMainArena,
+              ActorType.Camera3D, StatusType.Update, transform3D,
+                        ProjectionParameters.StandardDeepSixteenTen, viewPort);
+
+            camera3D.ControllerList.Add(
+                new Curve3DController(GameConstants.Controllers_NonCollidableCurveMainArena,
+                ControllerType.Curve,
+                        transform3DCurveDictionary["intro"])); //use the curve dictionary to retrieve a transform3DCurve by id
+
+            cameraManager.Add(camera3D);
+
+            #endregion Noncollidable Camera - Curve3D
+
+            #region Collidable Camera - 3rd Person
+
+            transform3D = new Transform3D(Vector3.Zero, -Vector3.UnitZ, Vector3.UnitY);
+
+            camera3D = new Camera3D(GameConstants.Camera_CollidableThirdPerson,
+                ActorType.Camera3D, StatusType.Update, transform3D,
+                ProjectionParameters.StandardDeepSixteenTen,
+                new Viewport(0, 0, 1440, 1080));
+
+            //attach a controller
+            camera3D.ControllerList.Add(new ThirdPersonController(
+                GameConstants.Controllers_CollidableThirdPerson,
+                ControllerType.ThirdPerson,
+                collidablePlayerObject,
+                170,
+                25,
+                1,
+                mouseManager));
+            cameraManager.Add(camera3D);
+
+            #endregion Collidable Camera - 3rd Person
+
+            cameraManager.ActiveCameraIndex = 0; //0, 1, 2, 3
+
+            if (level == 2)
+            {
+                cameraManager.ActiveCameraIndex = 1;
+            }
+
         }
 
         private void InitDictionaries()
@@ -602,55 +674,6 @@ namespace GDGame
             //sound
             soundManager = new SoundManager(this, StatusType.Update);
             Components.Add(soundManager);
-        }
-
-        private void InitCameras3D()
-        {
-            Transform3D transform3D = null;
-            Camera3D camera3D = null;
-            Viewport viewPort = new Viewport(0, 0, 1440, 1080);
-
-            #region Noncollidable Camera - Curve3D
-
-            //notice that it doesnt matter what translation, look, and up are since curve will set these
-            transform3D = new Transform3D(Vector3.Zero, Vector3.Zero, Vector3.Zero);
-
-            camera3D = new Camera3D(GameConstants.Camera_NonCollidableCurveMainArena,
-              ActorType.Camera3D, StatusType.Update, transform3D,
-                        ProjectionParameters.StandardDeepSixteenTen, viewPort);
-
-            camera3D.ControllerList.Add(
-                new Curve3DController(GameConstants.Controllers_NonCollidableCurveMainArena,
-                ControllerType.Curve,
-                        transform3DCurveDictionary["intro"])); //use the curve dictionary to retrieve a transform3DCurve by id
-
-            cameraManager.Add(camera3D);
-
-            #endregion Noncollidable Camera - Curve3D
-
-            #region Collidable Camera - 3rd Person
-
-            transform3D = new Transform3D(Vector3.Zero, -Vector3.UnitZ, Vector3.UnitY);
-
-            camera3D = new Camera3D(GameConstants.Camera_CollidableThirdPerson,
-                ActorType.Camera3D, StatusType.Update, transform3D,
-                ProjectionParameters.StandardDeepSixteenTen,
-                new Viewport(0, 0, 1440, 1080));
-
-            //attach a controller
-            camera3D.ControllerList.Add(new ThirdPersonController(
-                GameConstants.Controllers_CollidableThirdPerson,
-                ControllerType.ThirdPerson,
-                collidablePlayerObject,
-                170,
-                30,
-                1,
-                mouseManager));
-            cameraManager.Add(camera3D);
-
-            #endregion Collidable Camera - 3rd Person
-
-            cameraManager.ActiveCameraIndex = 0; //0, 1, 2, 3
         }
 
         #endregion Initialization - Graphics, Managers, Dictionaries, Cameras, Menu, UI
@@ -815,9 +838,7 @@ namespace GDGame
 
                 InitCollidablePickups1();
 
-                //InitCollidableZones1();
-
-                InitializeCollidablePlayer1();
+                InitializeCollidablePlayer();
 
                 /************ Level-loader (can be collidable or non-collidable) ************/
 
@@ -848,8 +869,7 @@ namespace GDGame
                 objectManager.Add(actorList);
             }
 
-
-            if (level == 2)
+            else if (level == 2)
             {
                 objectManager.Clear();
 
@@ -869,9 +889,7 @@ namespace GDGame
 
                 InitCollidablePickups2();
 
-                //InitCollidableZones2();
-
-                InitializeCollidablePlayer2();
+                InitializeCollidablePlayer();
 
                 /************ Level-loader (can be collidable or non-collidable) ************/
 
@@ -901,15 +919,17 @@ namespace GDGame
                                    new Vector3(0, 0, 0) //offset to move all new objects by
                                    );
                 objectManager.Add(actorList);
+                
             }
 
+            levelLoaded = true;
 
         }
 
         #region NEW - 26.12.20
 
         #region Level 1
-        private void InitializeCollidablePlayer1()
+        private void InitializeCollidablePlayer()
         {
             Transform3D transform3D = null;
             EffectParameters effectParameters = null;
@@ -953,26 +973,6 @@ namespace GDGame
                     this);
 
             objectManager.Add(collidablePlayerObject);
-        }
-
-        private void InitCollidableZones1()
-        {
-            Transform3D transform3D = null;
-            ICollisionPrimitive collisionPrimitive = null;
-            CollidableZoneObject collidableZoneObject = null;
-
-            transform3D = new Transform3D(new Vector3(0, 4, -30),
-                Vector3.Zero, new Vector3(20, 8, 4), Vector3.UnitZ, Vector3.UnitY);
-
-            //make the collision primitive - changed slightly to no longer need transform
-            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
-
-            collidableZoneObject = new CollidableZoneObject("sound and camera trigger zone 1", ActorType.CollidableZone,
-                StatusType.Drawn | StatusType.Update,
-                transform3D,
-                collisionPrimitive);
-
-            objectManager.Add(collidableZoneObject);
         }
 
         private void InitCollidableEnemy1()
@@ -1119,7 +1119,7 @@ namespace GDGame
 
             /************************* Sphere Collision Primitive  *************************/
 
-            transform3D = new Transform3D(new Vector3(150, 2.5f, 500), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
+            transform3D = new Transform3D(new Vector3(150, 4, 500), Vector3.Zero, new Vector3(5, 5, 5), Vector3.UnitZ, Vector3.UnitY);
 
             //a unique effectparameters instance for each box in case we want different color, texture, alpha
             effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_UnlitTextured],
@@ -1152,71 +1152,6 @@ namespace GDGame
         #endregion
 
         #region Level 2
-        private void InitializeCollidablePlayer2()
-        {
-            Transform3D transform3D = null;
-            EffectParameters effectParameters = null;
-            IVertexData vertexData = null;
-            ICollisionPrimitive collisionPrimitive = null;
-            PrimitiveType primitiveType;
-            int primitiveCount;
-
-            //set the position
-            transform3D = new Transform3D(new Vector3(170, 2.5f, 500), Vector3.Zero, new Vector3(5, 5, 5),
-                -Vector3.UnitZ, Vector3.UnitY);
-
-            //a unique effectparameters instance for each box in case we want different color, texture, alpha
-            effectParameters = new EffectParameters(effectDictionary[GameConstants.Effect_LitTextured],
-                textureDictionary["purpleCube"], Color.White, 1);
-
-            //get the vertex data object
-            vertexData = new VertexData<VertexPositionNormalTexture>(
-                VertexFactory.GetVerticesPositionNormalTexturedCube(1,
-                                  out primitiveType, out primitiveCount),
-                                  primitiveType, primitiveCount);
-
-            //make a CDCR surface - sphere or box, its up to you - you dont need to pass transform to either primitive anymore
-            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
-
-            //if we make this a field then we can pass to the 3rd person camera controller
-            collidablePlayerObject
-                = new CollidablePlayerObject("collidable player1",
-                    //this is important as it will determine how we filter collisions in our collidable player CDCR code
-                    ActorType.CollidablePlayer,
-                    StatusType.Drawn | StatusType.Update,
-                    transform3D,
-                    effectParameters,
-                    vertexData,
-                    collisionPrimitive,
-                    objectManager,
-                    GameConstants.KeysOne,
-                    GameConstants.playerMoveSpeed,
-                    GameConstants.playerRotateSpeed,
-                    keyboardManager,
-                    this);
-
-            objectManager.Add(collidablePlayerObject);
-        }
-
-        private void InitCollidableZones2()
-        {
-            Transform3D transform3D = null;
-            ICollisionPrimitive collisionPrimitive = null;
-            CollidableZoneObject collidableZoneObject = null;
-
-            transform3D = new Transform3D(new Vector3(0, 4, -30),
-                Vector3.Zero, new Vector3(20, 8, 4), Vector3.UnitZ, Vector3.UnitY);
-
-            //make the collision primitive - changed slightly to no longer need transform
-            collisionPrimitive = new BoxCollisionPrimitive(transform3D);
-
-            collidableZoneObject = new CollidableZoneObject("sound and camera trigger zone 1", ActorType.CollidableZone,
-                StatusType.Drawn | StatusType.Update,
-                transform3D,
-                collisionPrimitive);
-
-            objectManager.Add(collidableZoneObject);
-        }
 
         private void InitCollidableEnemy2()
         {
@@ -1385,10 +1320,6 @@ namespace GDGame
             drawnActor3D.Transform3D.Translation = new Vector3(135, 15, 436);
             drawnActor3D.EffectParameters.Alpha = 1;
 
-            //lets add a rotation controller so we can see all sides easily
-            drawnActor3D.ControllerList.Add(
-                new RotationController("rot controller1", ControllerType.RotationOverTime,
-                1, new Vector3(0, 1, 0)));
 
             objectManager.Add(drawnActor3D);
         }
@@ -1588,10 +1519,28 @@ namespace GDGame
                 EventDispatcher.Publish(new EventData(EventCategoryType.Camera,
                     EventActionType.OnCameraCycle, null));
             }
+
+            //if (cameraManager.ActiveCameraIndex == 0)
+            //{
+            //    if ()
+            //    {
+            //        cameraManager.CycleActiveCamera();
+            //        EventDispatcher.Publish(new EventData(EventCategoryType.Camera,
+            //            EventActionType.OnCameraCycle, null));
+            //    }
+            //}
+
             #endregion Camera
+
 
 #endif
             #endregion Demo
+
+            if (!levelLoaded)
+            {
+                InitLevel(2000);
+
+            }
 
             base.Update(gameTime);
         }

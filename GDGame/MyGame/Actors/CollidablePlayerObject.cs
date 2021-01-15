@@ -6,6 +6,7 @@ using GDLibrary.Managers;
 using GDLibrary.Parameters;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace GDLibrary.MyGame
 {
@@ -127,12 +128,15 @@ namespace GDLibrary.MyGame
                 //the boxes on the left that we loaded from level loader
                 if (collidee.ActorType == ActorType.CollidablePickup)
                 {
-                    //remove the object
-                    object[] parameters = { collidee };
-                    EventDispatcher.Publish(new EventData(EventCategoryType.Object, EventActionType.OnRemoveActor, parameters));
+                    object[] parameters = { "win" };
+                    EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
+                        EventActionType.OnPlay2D, parameters));
 
-                    object[] parameters2 = new object[] { 1 };
-                    EventDispatcher.Publish(new EventData(EventCategoryType.Player, EventActionType.OnWin, parameters2));
+                    object[] parameters2 = new object[] { "end" };
+                    EventDispatcher.Publish(new EventData(EventCategoryType.Player, EventActionType.OnGameOver, parameters2));
+
+                    object[] parameters3 = new object[] { 2 };
+                    EventDispatcher.Publish(new EventData(EventCategoryType.Player, EventActionType.OnWin, parameters3));
 
 
                 }

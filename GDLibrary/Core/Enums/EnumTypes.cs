@@ -119,6 +119,7 @@
         Pickup,
         Sound,
         Menu,
+        End,
         UI,
         Object,
         Opacity,
@@ -199,6 +200,7 @@
         OnApplyActionToFirstMatchActor,
         OnApplyActionToAllActors,
         OnDeathCountChange,
+        OnGameOver,
 
         //add more here...
     }

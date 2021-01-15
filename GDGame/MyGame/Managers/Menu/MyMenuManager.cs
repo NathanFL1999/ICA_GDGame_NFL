@@ -4,6 +4,7 @@ using GDLibrary.Events;
 using GDLibrary.Managers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace GDGame.MyGame.Managers
 {
@@ -11,6 +12,7 @@ namespace GDGame.MyGame.Managers
     {
         private MouseManager mouseManager;
         private KeyboardManager keyboardManager;
+        private List<DrawnActor2D> loadedTempTexture;
 
         public MyMenuManager(Game game, StatusType statusType, SpriteBatch spriteBatch,
             MouseManager mouseManager, KeyboardManager keyboardManager)
@@ -18,6 +20,8 @@ namespace GDGame.MyGame.Managers
         {
             this.mouseManager = mouseManager;
             this.keyboardManager = keyboardManager;
+            this.loadedTempTexture = new List<DrawnActor2D>();
+            EventDispatcher.Subscribe(EventCategoryType.Player, HandleEvent);
         }
 
         public override void HandleEvent(EventData eventData)
@@ -29,7 +33,18 @@ namespace GDGame.MyGame.Managers
                 else if (eventData.EventActionType == EventActionType.OnPlay)
                     this.StatusType = StatusType.Off;
             }
-        }
+
+            else if (eventData.EventCategoryType == EventCategoryType.Player)
+            {
+                if (eventData.EventActionType == EventActionType.OnGameOver)
+                {
+                        StatusType = StatusType.Update | StatusType.Drawn;
+                        
+                        SetScene("end");
+                    }
+                }
+            }
+        
 
         protected override void HandleInput(GameTime gameTime)
         {
@@ -73,6 +88,10 @@ namespace GDGame.MyGame.Managers
 
                     EventDispatcher.Publish(new EventData(EventCategoryType.Menu, EventActionType.OnPlay, null));
 
+                    break;
+
+                case "End_Button":
+                    this.Game.Exit();
                     break;
 
                 case "controls":

@@ -34,10 +34,11 @@ namespace GDGame.MyGame.Actors
 
             Vector3 movement = new Vector3(0, 1, 0);
 
+            //enemy movement towards player, player has to be a certain distance away
             if ((this.Transform3D.Translation - player.Transform3D.Translation).Length() <= 60)
             {
 
-                    if (this.Transform3D.Translation.X <= player.Transform3D.Translation.X)
+                if (this.Transform3D.Translation.X <= player.Transform3D.Translation.X)
                     {
                         this.Transform3D.TranslateBy(new Vector3(0.2f, 0, 0));
                     }
@@ -61,6 +62,8 @@ namespace GDGame.MyGame.Actors
 
             //reset translate and rotate and update primitive
             base.Update(gameTime);
+
         }
+       
     }
 }
