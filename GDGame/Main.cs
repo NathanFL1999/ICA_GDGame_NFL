@@ -134,10 +134,10 @@ namespace GDGame
         private void LoadSounds()
         {
             soundManager.Add(new GDLibrary.Managers.Cue("lose",
-                Content.Load<SoundEffect>("Assets/Audio/Effects/lose"), SoundCategoryType.WinLose, new Vector3(0.5f, 0, 0), false));
+                Content.Load<SoundEffect>("Assets/Audio/Effects/lose"), SoundCategoryType.WinLose, new Vector3(0.4f, 0, 0), false));
 
             soundManager.Add(new GDLibrary.Managers.Cue("win",
-                Content.Load<SoundEffect>("Assets/Audio/Effects/win"), SoundCategoryType.WinLose, new Vector3(0.5f, 0, 0), false));
+                Content.Load<SoundEffect>("Assets/Audio/Effects/win"), SoundCategoryType.WinLose, new Vector3(0.4f, 0, 0), false));
 
             soundManager.Add(new GDLibrary.Managers.Cue("buttonClick",
                 Content.Load<SoundEffect>("Assets/Audio/Effects/buttonClick"), SoundCategoryType.WinLose, new Vector3(0.5f, 0, 0), false));
@@ -251,7 +251,7 @@ namespace GDGame
             Window.Title = "Zero Deaths";
 
             isPaused = false;
-            level = 1;
+            level = 1; //change to 2 for second level
             levelLoaded = false;
 
             //graphic settings - see https://en.wikipedia.org/wiki/Display_resolution#/media/File:Vector_Video_Standards8.svg
@@ -344,6 +344,7 @@ namespace GDGame
             Texture2D texture = null;
             SpriteFont spriteFont = null;
 
+            //end screen background
             texture = textureDictionary["metal"];
 
             transform2D = new Transform2D(screenCentre, 0,
@@ -370,7 +371,7 @@ namespace GDGame
 
             UITextObject deathCount = new UITextObject("deathCount", ActorType.UIText,
                 StatusType.Drawn, transform2D,
-               Color.White, 0,
+               Color.Black, 0,
                SpriteEffects.None,
                text, spriteFont);
 
@@ -382,6 +383,7 @@ namespace GDGame
             MyGameStateManager gameStateManager = new MyGameStateManager(this,
                 StatusType.Off, deathCount);
 
+            //end screen button
             texture = textureDictionary["genericbtn"];
 
             transform2D = new Transform2D(screenCentre + new Vector2(0, 160), 0,
@@ -509,6 +511,7 @@ namespace GDGame
 
         private void HandleEvent(EventData eventData)
         {
+            //changes level if the level count increases by 1
             if (eventData.EventCategoryType == EventCategoryType.Player)
             {
                 if (eventData.EventActionType == EventActionType.OnWin)
@@ -518,7 +521,7 @@ namespace GDGame
                     cameraManager.ActiveCameraIndex = 1;
                 }
             }
-
+            //handles the event to change the scene
             else if (eventData.EventCategoryType == EventCategoryType.End)
             {
                 if (eventData.EventActionType == EventActionType.OnGameOver)
@@ -921,6 +924,7 @@ namespace GDGame
 
         #region NEW - 26.12.20
 
+        //content for level 1
         #region Level 1
         private void InitializeCollidablePlayer()
         {
@@ -1144,6 +1148,7 @@ namespace GDGame
 
         #endregion
 
+        //content for level 2
         #region Level 2
 
         private void InitCollidableEnemy2()
@@ -1506,6 +1511,7 @@ namespace GDGame
             #endregion Menu & UI Demos
 
             #region Camera
+            //camera cycles when c is pressed
             if (keyboardManager.IsFirstKeyPress(Keys.C))
             {
                 cameraManager.CycleActiveCamera();
@@ -1529,6 +1535,7 @@ namespace GDGame
 #endif
             #endregion Demo
 
+            //reloads the level if the level loader is true
             if (!levelLoaded)
             {
                 InitLevel(2000);

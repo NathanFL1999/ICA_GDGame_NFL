@@ -125,7 +125,7 @@ namespace GDLibrary.MyGame
             }
             else if (collidee is CollidablePrimitiveObject)
             {
-                //the boxes on the left that we loaded from level loader
+                //the octahedron at the end of the level
                 if (collidee.ActorType == ActorType.CollidablePickup)
                 {
                     object[] parameters = { "win" };
@@ -140,7 +140,7 @@ namespace GDLibrary.MyGame
 
 
                 }
-                //the boxes on the right that move up and down
+                //the enemy collision that resets the player
                 else if (collidee.ActorType == ActorType.Enemy)
                 {
                     object[] parameters = { "lose" };
@@ -149,9 +149,9 @@ namespace GDLibrary.MyGame
 
                     (collidee as DrawnActor3D).EffectParameters.DiffuseColor = Color.Yellow;
                     Transform3D.Translation = new Vector3(150, 2.5f, 500);
-
-                    
+      
                 }
+
                 if (collidee.ActorType == ActorType.CollidableObstacle)
                 {
                     object[] parameters = { "lose" };

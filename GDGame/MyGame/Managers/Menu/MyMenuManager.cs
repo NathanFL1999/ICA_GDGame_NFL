@@ -91,7 +91,13 @@ namespace GDGame.MyGame.Managers
                     break;
 
                 case "End_Button":
+
+                    object[] parameters2 = { "buttonClick" };
+                    EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
+                        EventActionType.OnPlay2D, parameters2));
+
                     this.Game.Exit();
+
                     break;
 
                 case "controls":
@@ -99,6 +105,10 @@ namespace GDGame.MyGame.Managers
                     break;
 
                 case "exit":
+                    object[] parameters3 = { "buttonClick" };
+                    EventDispatcher.Publish(new EventData(EventCategoryType.Sound,
+                        EventActionType.OnPlay2D, parameters3));
+
                     this.Game.Exit();
                     break;
 

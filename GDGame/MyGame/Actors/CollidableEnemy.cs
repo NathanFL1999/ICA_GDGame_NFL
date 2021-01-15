@@ -64,6 +64,6 @@ namespace GDGame.MyGame.Actors
             base.Update(gameTime);
 
         }
-       
+
     }
 }
